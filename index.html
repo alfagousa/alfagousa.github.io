@@ -189,12 +189,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
   .stats{gap:6px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.alertbar button{margin-inline-start:8px;border:0;border-radius:12px;padding:2px 12px;font:inherit;cursor:pointer}
 </style>
 </head>
 <body>
 
 <!-- ============ الموقع العام ============ -->
 <div id="site">
+  <div id="netBar" class="alertbar" style="background:#7a5200" hidden></div>
   <div id="alertBar" class="alertbar" hidden></div>
   <header class="top">
     <div class="wrap">
@@ -548,7 +550,8 @@ const store = {
     }
   }
 };
-function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+function loadScript(src,n=3){return new Promise((res,rej)=>{const t=()=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>{s.remove();if(--n>0)setTimeout(t,1500);else rej(new Error('script'))};document.head.appendChild(s)};t()})}
+let NETFAIL=false;
 let fbReady=null;
 function initFB(){
   if(fbReady) return fbReady;
@@ -556,7 +559,8 @@ function initFB(){
     const v='10.12.2';
     for(const n of ['app','auth','firestore']) await loadScript(`https://www.gstatic.com/firebasejs/${v}/firebase-${n}-compat.js`);
     firebase.initializeApp(FIREBASE_CONFIG);
-  })();
+    try{ firebase.firestore().settings({experimentalAutoDetectLongPolling:true,merge:true}); }catch(e){}
+  })().catch(e=>{ fbReady=null; throw e; });
   return fbReady;
 }
 const sortDesc=a=>a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));
@@ -570,6 +574,7 @@ const DB = {
     return d.exists?{...SEED.settings,...d.data()}:SEED.settings;
   },
   async saveSettings(s){
+    if(!DEMO&&NETFAIL) throw new Error('offline');
     if(DEMO) return store.set('v_settings',s);
     await initFB(); await firebase.firestore().collection('settings').doc('main').set(s);
   },
@@ -584,6 +589,7 @@ const DB = {
     return c==='archive'?sortYear(arr):sortDesc(arr);
   },
   async save(c,item){
+    if(!DEMO&&NETFAIL) throw new Error('offline');
     if(DEMO){
       const arr=store.get('v_'+c)||[...SEED[c]];
       if(item.id){ const i=arr.findIndex(x=>x.id===item.id); if(i>-1) arr[i]=item; else arr.push(item); }
@@ -595,6 +601,7 @@ const DB = {
     return id?col.doc(id).set(data):col.add(data);
   },
   async remove(c,id){
+    if(!DEMO&&NETFAIL) throw new Error('offline');
     if(DEMO){ return store.set('v_'+c,(store.get('v_'+c)||SEED[c]).filter(x=>x.id!==id)); }
     await initFB(); return firebase.firestore().collection(c).doc(id).delete();
   },
@@ -626,6 +633,11 @@ let newsShown=10, archShown=12, newsQ='', newsTag='الكل', projQ='';
 const TAGS=['عام','عزاء','أفراح','إعلانات','شخصيات'];
 const norm=t=>String(t||'').toLowerCase().replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');
 const hit=(q,...f)=>!q||norm(f.join(' ')).includes(norm(q));
+const CACHE='v_cache';
+function cacheSave(){ const d={settings:S.settings,news:S.news,projects:S.projects,archive:S.archive,people:S.people};
+  try{ localStorage.setItem(CACHE,JSON.stringify(d)); }catch(e){ try{ const l=o=>o.map(({img,...r})=>r); localStorage.setItem(CACHE,JSON.stringify({...d,news:l(d.news),projects:l(d.projects),archive:l(d.archive),people:l(d.people)})); }catch(x){} } }
+function cacheLoad(){ try{ const d=JSON.parse(localStorage.getItem(CACHE)); if(d&&d.news){ Object.assign(S,d); return true; } }catch(e){} return false; }
+async function loadAllRetry(n=3){ let last; for(let i=0;i<n;i++){ try{ await loadAll(); if(!DEMO) cacheSave(); return; }catch(e){ last=e; console.error(e); await new Promise(r=>setTimeout(r,1500*(i+1))); } } throw last; }
 async function loadAll(){
   [S.settings,S.news,S.projects,S.archive,S.people]=await Promise.all([DB.getSettings(),DB.list('news'),DB.list('projects'),DB.list('archive'),DB.list('people')]);
 }
@@ -923,7 +935,15 @@ async function route(){
 }catch(e){} })();
 (async function start(){
   bindPickers(); bindAdmin(); bindLightbox();
-  try{ await loadAll(); }catch(e){ console.error(e); S.settings=SEED.settings; S.news=SEED.news; S.projects=SEED.projects; S.archive=SEED.archive; S.people=[]; }
+  try{ await loadAllRetry(); }
+  catch(e){
+    console.error(e); NETFAIL=true;
+    if(!cacheLoad()){ S.settings=SEED.settings; S.news=[]; S.projects=[]; S.archive=[]; S.people=[]; }
+    const nb=$('#netBar'); nb.hidden=false;
+    nb.innerHTML='تعذّر الاتصال بالخادم، يُعرض آخر محتوى محفوظ. <button id="netRetry">إعادة المحاولة</button>';
+    const again=async()=>{ try{ await loadAll(); cacheSave(); NETFAIL=false; nb.hidden=true; clearInterval(tm); renderSite(); }catch(x){} };
+    const tm=setInterval(again,20000); $('#netRetry').onclick=again;
+  }
   renderSite();
   window.addEventListener('hashchange',route);
   route();
