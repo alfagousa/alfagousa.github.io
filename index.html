@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>قرية الفقوسة</title>
 <meta name="theme-color" content="#0a5a8c">
+<script>window['ga-disable-G-N99DFKJ2V3']=/^#admin/.test(location.hash);</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-N99DFKJ2V3"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-N99DFKJ2V3');</script>
 <meta property="og:title" content="قرية الفقوسة"><meta property="og:description" content="الموقع الرسمي لقرية الفقوسة">
 <meta property="og:type" content="website"><meta name="twitter:card" content="summary">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -190,6 +193,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .alertbar button{margin-inline-start:8px;border:0;border-radius:12px;padding:2px 12px;font:inherit;cursor:pointer}
+.hl{animation:hl 2.6s}@keyframes hl{0%,60%{box-shadow:0 0 0 4px #e8b94a}100%{box-shadow:none}}
+#busy{position:fixed;inset:0;background:rgba(6,48,42,.45);display:grid;place-items:center;z-index:300}
+#busy[hidden]{display:none}
+#busy i{width:54px;height:54px;border:5px solid #fff;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.skel-f{min-height:150px}
+.art-feat{border-inline-start:6px solid var(--gold);background:linear-gradient(#fffdf6,#fff)}
+.art-feat .k{color:#8a6a10;font-weight:700;font-size:14px}.art-feat h3{font-size:22px;margin:4px 0}.art-feat p{color:#3d4a43;margin:6px 0 12px}
+.art-main{padding:22px}.art-main h1{font-size:28px;line-height:1.5;margin:4px 0 6px;color:var(--green-d)}
+.art-meta{color:var(--muted);font-size:14px;margin-bottom:14px}
+.art-body{font-size:19px;line-height:2.1;white-space:pre-wrap;color:#1f2a24}
+.art-list{display:grid;gap:12px;margin-top:12px}.art-item{display:block;padding:14px 16px;border-radius:14px;background:#fff;border:1px solid var(--line);color:inherit;text-decoration:none}
+.art-item b{display:block;font-size:17px}.art-item span{color:var(--muted);font-size:13px}.art-item p{margin:4px 0 0;font-size:15px;color:#3d4a43}
 </style>
 </head>
 <body>
@@ -197,6 +213,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 <!-- ============ الموقع العام ============ -->
 <div id="site">
   <div id="netBar" class="alertbar" style="background:#7a5200" hidden></div>
+  <div id="busy" hidden><i></i></div>
   <div id="alertBar" class="alertbar" hidden></div>
   <header class="top">
     <div class="wrap">
@@ -207,6 +224,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
         <a href="#home" data-page="home">الرئيسية</a>
         <a href="#history" data-page="history">نبذة تاريخية</a>
         <a href="#news" data-page="news">الأخبار</a>
+        <a href="#articles" data-page="articles">المقالات</a>
         <a href="#projects" data-page="projects">المشاريع</a>
         <a href="#people" data-page="people">شخصيات</a>
         <a href="#archive" data-page="archive">الأرشيف</a>
@@ -223,8 +241,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
       <p id="heroTag"></p>
       <a class="btn" href="#news">آخر الأخبار</a>
     </div>
-    <div class="wrap"><div class="stats" id="stats"></div></div>
+    <div class="wrap"><div class="stats" id="stats"><div class="card skel" style="min-height:90px"></div><div class="card skel" style="min-height:90px"></div><div class="card skel" style="min-height:90px"></div><div class="card skel" style="min-height:90px"></div></div></div>
     <section class="sec" id="featSec" hidden style="padding-bottom:0"><div class="wrap"><div id="featProj"></div></div></section>
+    <section class="sec" id="featArtSec" hidden style="padding-bottom:0"><div class="wrap"><div id="featArt"></div></div></section>
     <section class="sec"><div class="wrap">
       <h2>آخر الأخبار</h2>
       <div class="grid" id="homeNews" style="margin-top:20px"><div class="card skel"></div><div class="card skel"></div><div class="card skel"></div></div>
@@ -263,7 +282,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
       <h2>مشاريع القرية</h2>
       <p class="lead">تابع نسبة الإنجاز في كل مشروع.</p>
       <input class="search" id="projQ" type="search" placeholder="ابحث في المشاريع...">
-      <div class="grid" id="projGrid"></div>
+      <div class="grid" id="projGrid"><div class="card skel"></div><div class="card skel"></div><div class="card skel"></div></div>
+      <div class="more"><button class="btn sec" id="projMore" hidden>عرض المزيد</button></div>
     </div></section>
   </main>
 
@@ -272,8 +292,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
     <section class="sec"><div class="wrap">
       <h2>أرشيف القرية</h2>
       <p class="lead">صور قديمة من ذاكرة القرية. اضغط على الصورة لتكبيرها.</p>
-      <div class="arch" id="archGrid"></div>
+      <div class="arch" id="archGrid"><div class="card skel"></div><div class="card skel"></div><div class="card skel"></div><div class="card skel"></div></div>
       <div class="more"><button class="btn sec" id="archMore" hidden>عرض المزيد</button></div>
+    </div></section>
+  </main>
+
+  <!-- المقالات -->
+  <main class="page" data-page="articles">
+    <section class="sec"><div class="wrap">
+      <h2>المقالات</h2>
+      <div id="artMain" style="margin-top:16px"><div class="card skel"></div></div>
+      <div id="artPrevBox" hidden><h2 style="margin-top:30px;font-size:22px">مقالات سابقة</h2><div class="art-list" id="artList"></div><div class="more"><button class="btn sec" id="artMore" hidden>مقالات أقدم</button></div></div>
     </div></section>
   </main>
 
@@ -282,8 +311,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
     <section class="sec"><div class="wrap">
       <h2>شخصيات القرية</h2>
       <p class="lead">شخصيات لها أثر في القرية.</p>
-      <div class="people" id="peopleGrid"></div>
-      <div class="mem" id="memBox" hidden><h2>في الذاكرة</h2><div class="people" id="memGrid"></div></div>
+      <div class="people" id="peopleGrid"><div class="card skel"></div><div class="card skel"></div><div class="card skel"></div></div>
+      <div class="more"><button class="btn sec" id="peopleMore" hidden>عرض المزيد</button></div>
+      <div class="mem" id="memBox" hidden><h2>في الذاكرة</h2><div class="people" id="memGrid"></div><div class="more"><button class="btn sec" id="memMore" hidden>عرض المزيد</button></div></div>
     </div></section>
   </main>
 
@@ -298,6 +328,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
       <div class="card" style="margin-top:14px"><h3>تثبيت الموقع على الهاتف</h3>
         <p><b>أندرويد (كروم):</b> القائمة ⋮ ثم «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».</p>
         <p><b>آيفون (سفاري):</b> زر المشاركة ثم «إضافة إلى الشاشة الرئيسية».</p></div>
+      <div class="card" style="margin-top:14px"><h3>الخصوصية</h3><p>يستخدم الموقع إحصاءات مجهولة لقياس عدد الزيارات وتحسين الخدمة، ولا يجمع أي بيانات شخصية عنك.</p></div>
       <div class="card dev"><h3>المطوّر</h3><b>محمد يوسف احمد مختار</b><b dir="ltr">Muhammad Jousief Ahmed Mokhtar</b><a id="devMail" href="#" dir="ltr" style="color:var(--green)"></a></div>
     </div></section>
   </main>
@@ -306,7 +337,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
   <main class="page" data-page="contact">
     <section class="sec"><div class="wrap">
       <h2>تواصل معنا</h2>
-      <div class="contact-grid" id="contactBox" style="margin-top:20px"></div>
+      <div class="contact-grid" id="contactBox" style="margin-top:20px"><div class="card skel"></div><div class="card skel"></div></div>
     </div></section>
   </main>
 
@@ -317,7 +348,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
     <button type="button" id="moreBtn" data-more><i>☰</i>المزيد</button>
   </nav>
   <div id="moreSheet" hidden><div>
-    <a href="#history">نبذة تاريخية</a><a href="#people">شخصيات</a><a href="#archive">الأرشيف</a><a href="#contact">تواصل معنا</a><a href="#about">عن الموقع</a>
+    <a href="#history">نبذة تاريخية</a><a href="#articles">المقالات</a><a href="#people">شخصيات</a><a href="#archive">الأرشيف</a><a href="#contact">تواصل معنا</a><a href="#about">عن الموقع</a>
   </div></div>
   <footer>
     <div>© <span id="yr"></span> <span id="footName">قرية الفقوسة</span> — جميع الحقوق محفوظة</div>
@@ -353,8 +384,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
     <div class="tabs" id="tabs">
       <button data-t="news" class="on">الأخبار</button>
       <button data-t="projects">المشاريع</button>
+      <button data-t="articles">المقالات</button>
       <button data-t="people">الشخصيات</button>
       <button data-t="archive">الأرشيف</button>
+      <button data-t="backup">النسخ الاحتياطي</button>
       <button data-t="about">عن القرية</button>
     </div>
 
@@ -408,6 +441,24 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
     </div>
 
     <!-- الأعلام -->
+    <div id="tab-articles" hidden>
+      <div class="card">
+        <h3 id="rFormTitle">إضافة مقال</h3>
+        <input type="hidden" id="rId">
+        <label>عنوان المقال</label><input id="rTitle">
+        <label>اسم الكاتب (اختياري)</label><input id="rAuthor">
+        <label>التاريخ</label><input id="rDate" type="date">
+        <label>نص المقال</label><textarea id="rBody" style="min-height:260px"></textarea>
+        <div class="picker" data-p="r" data-max="800" data-type="image/jpeg" data-limit="220000">
+          <label>صورة المقال (اختياري)</label>
+          <div class="pv"><img alt="" hidden><span class="ph">لم تُختر صورة</span></div>
+          <div class="actions"><label class="btn sec sm">اختيار من الجهاز<input type="file" accept="image/*" hidden></label><button type="button" class="btn danger sm" data-clear hidden>إزالة الصورة</button></div>
+        </div>
+        <div class="actions"><button class="btn" id="rSave">حفظ المقال</button><button class="btn sec" id="rCancel" hidden>إلغاء التعديل</button></div>
+      </div>
+      <div class="card" style="margin-top:14px"><h3>المقالات المنشورة</h3><div id="rList"></div></div>
+    </div>
+
     <div id="tab-people" hidden>
       <div class="card">
         <h3 id="gFormTitle">إضافة شخصية</h3>
@@ -448,6 +499,22 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
     </div>
 
     <!-- عن القرية -->
+    <div id="tab-backup" hidden>
+      <div class="card">
+        <h3>نسخة احتياطية</h3>
+        <p>تنزيل كل المحتوى (الأخبار والمشاريع والمقالات والشخصيات والأرشيف والإعدادات) في ملف واحد.</p>
+        <button class="btn" id="bkMake">تجهيز النسخة</button>
+        <div id="bkReady" hidden style="margin-top:12px"><p id="bkInfo"></p>
+          <div class="actions"><button class="btn" id="bkShare">مشاركة / حفظ في Drive</button><button class="btn sec" id="bkDown">تنزيل على الهاتف</button></div></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>استرجاع نسخة</h3>
+        <p>الاسترجاع بالدمج: يُضاف المفقود ويُحدَّث الموجود بنفس المعرّف، ولا يُحذف شيء. ينصح بتنزيل نسخة حديثة قبل الاسترجاع.</p>
+        <label class="btn sec">اختيار ملف النسخة<input type="file" id="rsFile" accept=".json,application/json" hidden></label>
+        <div id="rsPreview" hidden style="margin-top:12px"></div>
+      </div>
+    </div>
+
     <div id="tab-about" hidden>
       <div class="card">
         <div class="row">
@@ -530,7 +597,7 @@ const SEED = {
     {id:"p3",title:"مركز صحي القرية",desc:"بناء مركز صحي صغير لخدمة الإسعافات الأولية والأمومة.",status:"مخطط",pct:5,date:"2026-08-30",img:""},
     {id:"p4",title:"إنارة الشارع الرئيسي بالطاقة الشمسية",desc:"تركيب أعمدة إنارة شمسية على طول الشارع الرئيسي.",status:"مكتمل",pct:100,date:"2026-07-10",img:""}
   ],
-  people:[],
+  people:[], articles:[],
   archive:[
     {id:"a1",title:"سوق القرية القديم",year:"1965",desc:"صورة تجريبية — استبدلها بصورة حقيقية واكتب هنا من في الصورة وأين التُقطت.",img:""},
     {id:"a2",title:"المسجد الأول بعد البناء",year:"1978",desc:"صورة تجريبية — تفاصيل المناسبة والأشخاص تُكتب هنا.",img:""},
@@ -551,7 +618,7 @@ const store = {
   }
 };
 function loadScript(src,n=3){return new Promise((res,rej)=>{const t=()=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>{s.remove();if(--n>0)setTimeout(t,1500);else rej(new Error('script'))};document.head.appendChild(s)};t()})}
-let NETFAIL=false;
+let NETFAIL=false, DATA_READY=false;
 let fbReady=null;
 function initFB(){
   if(fbReady) return fbReady;
@@ -563,6 +630,13 @@ function initFB(){
   })().catch(e=>{ fbReady=null; throw e; });
   return fbReady;
 }
+const PG={
+  news:{col:'news',order:['date','desc'],n:10}, projects:{col:'projects',order:['date','desc'],n:10},
+  archive:{col:'archive',order:['year','asc'],n:10}, articles:{col:'articles',order:['date','desc'],n:5},
+  alive:{col:'people',where:['dead',false],n:10}, dead:{col:'people',where:['dead',true],n:10}
+};
+let CUR={};
+const resetCur=()=>{ CUR={}; for(const k in PG) CUR[k]={last:null,done:false,idx:0}; }; resetCur();
 const sortDesc=a=>a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));
 const sortYear=a=>a.sort((x,y)=>String(x.year||'').localeCompare(String(y.year||''),'en',{numeric:true}));
 
@@ -577,6 +651,47 @@ const DB = {
     if(!DEMO&&NETFAIL) throw new Error('offline');
     if(DEMO) return store.set('v_settings',s);
     await initFB(); await firebase.firestore().collection('settings').doc('main').set(s);
+  },
+  async page(key,n){
+    const cfg=PG[key], size=n||cfg.n, st=CUR[key];
+    if(st.done) return [];
+    let items;
+    if(DEMO){
+      let all=await DB.list(cfg.col);
+      if(cfg.col==='people') all=all.filter(g=>!!g.dead===(key==='dead'));
+      items=all.slice(st.idx,st.idx+size); st.idx+=items.length; if(st.idx>=all.length) st.done=true;
+      return items;
+    }
+    await initFB();
+    let q=firebase.firestore().collection(cfg.col);
+    if(cfg.where) q=q.where(cfg.where[0],'==',cfg.where[1]);
+    if(cfg.order) q=q.orderBy(cfg.order[0],cfg.order[1]);
+    if(st.last) q=q.startAfter(st.last);
+    const sn=await q.limit(size).get();
+    if(sn.docs.length) st.last=sn.docs[sn.docs.length-1];
+    if(sn.docs.length<size) st.done=true;
+    return sn.docs.map(d=>({id:d.id,...d.data()}));
+  },
+  async getOne(c,id){
+    if(DEMO) return (await DB.list(c)).find(x=>x.id===id)||null;
+    await initFB(); const d=await firebase.firestore().collection(c).doc(id).get();
+    return d.exists?{id:d.id,...d.data()}:null;
+  },
+  async getStats(){
+    if(DEMO) return calcStats(await DB.list('projects'));
+    await initFB(); const d=await firebase.firestore().collection('settings').doc('stats').get();
+    return d.exists?d.data():null;
+  },
+  async putStats(st){
+    if(!DEMO&&NETFAIL) throw new Error('offline');
+    if(DEMO) return store.set('v_stats',st);
+    await initFB(); await firebase.firestore().collection('settings').doc('stats').set(st);
+  },
+  async upsert(c,item){
+    if(!DEMO&&NETFAIL) throw new Error('offline');
+    const {id,...data}=item;
+    if(DEMO){ const arr=store.get('v_'+c)||[...SEED[c]]; const i=arr.findIndex(x=>x.id===id); if(i>-1) arr[i]=item; else arr.push(item); return store.set('v_'+c,arr); }
+    await initFB(); return firebase.firestore().collection(c).doc(id).set(data);
   },
   async list(c){
     let arr;
@@ -628,19 +743,40 @@ const fmt=d=>{ try{return new Date(d).toLocaleDateString('ar-EG',{year:'numeric'
 const today=()=>new Date().toISOString().slice(0,10);
 let toastT;
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600)}
-const S={settings:{},news:[],projects:[],archive:[],people:[]};
+const S={settings:{},news:[],projects:[],archive:[],people:[],articles:[]};
+let artSel=null;
 let newsShown=10, archShown=12, newsQ='', newsTag='الكل', projQ='';
 const TAGS=['عام','عزاء','أفراح','إعلانات','شخصيات'];
 const norm=t=>String(t||'').toLowerCase().replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');
 const hit=(q,...f)=>!q||norm(f.join(' ')).includes(norm(q));
 const CACHE='v_cache';
-function cacheSave(){ const d={settings:S.settings,news:S.news,projects:S.projects,archive:S.archive,people:S.people};
-  try{ localStorage.setItem(CACHE,JSON.stringify(d)); }catch(e){ try{ const l=o=>o.map(({img,...r})=>r); localStorage.setItem(CACHE,JSON.stringify({...d,news:l(d.news),projects:l(d.projects),archive:l(d.archive),people:l(d.people)})); }catch(x){} } }
+function cacheSave(){ const d={settings:S.settings,stats:S.stats,news:S.news,projects:S.projects,archive:S.archive,people:S.people,articles:S.articles};
+  try{ localStorage.setItem(CACHE,JSON.stringify(d)); }catch(e){ try{ const l=o=>o.map(({img,...r})=>r); localStorage.setItem(CACHE,JSON.stringify({...d,news:l(d.news),projects:l(d.projects),archive:l(d.archive),people:l(d.people),articles:l(d.articles||[])})); }catch(x){} } }
 function cacheLoad(){ try{ const d=JSON.parse(localStorage.getItem(CACHE)); if(d&&d.news){ Object.assign(S,d); return true; } }catch(e){} return false; }
 async function loadAllRetry(n=3){ let last; for(let i=0;i<n;i++){ try{ await loadAll(); if(!DEMO) cacheSave(); return; }catch(e){ last=e; console.error(e); await new Promise(r=>setTimeout(r,1500*(i+1))); } } throw last; }
-async function loadAll(){
-  [S.settings,S.news,S.projects,S.archive,S.people]=await Promise.all([DB.getSettings(),DB.list('news'),DB.list('projects'),DB.list('archive'),DB.list('people')]);
+function calcStats(pr){
+  const done=pr.filter(p=>p.status==='مكتمل').length, avg=pr.length?Math.round(pr.reduce((a,p)=>a+(Number(p.pct)||0),0)/pr.length):0;
+  const ft=pr.filter(p=>p.status!=='مكتمل').sort((a,b)=>(Number(b.pct)||0)-(Number(a.pct)||0))[0];
+  return {count:pr.length,done,avg,feat:ft?{id:ft.id,title:ft.title,pct:Number(ft.pct)||0}:null};
 }
+async function updateStats(){ const st=calcStats(S.projects); await DB.putStats(st); S.stats=st; }
+async function loadAll(){
+  resetCur();
+  const [se,stt,news,pro,arc,art,al,de]=await Promise.all([DB.getSettings(),DB.getStats().catch(()=>null),DB.page('news'),DB.page('projects'),DB.page('archive'),DB.page('articles').catch(()=>{CUR.articles.done=true;return[]}),DB.page('alive'),DB.page('dead')]);
+  S.settings=se; S.stats=stt; S.news=sortDesc(news); S.projects=sortDesc(pro); S.archive=sortYear(arc); S.articles=sortDesc(art); S.people=[...al,...de];
+}
+async function loadFull(){
+  const [news,pro,arc,art,peo]=await Promise.all([DB.list('news'),DB.list('projects'),DB.list('archive'),DB.list('articles').catch(()=>[]),DB.list('people')]);
+  S.news=news; S.projects=pro; S.archive=arc; S.articles=art; S.people=peo;
+  for(const k in CUR) CUR[k].done=true;
+}
+const KEYARR={news:'news',projects:'projects',archive:'archive',articles:'articles',alive:'people',dead:'people'};
+async function loadMore(key,n){
+  const items=await DB.page(key,n), arr=S[KEYARR[key]];
+  items.forEach(it=>{ if(!arr.some(x=>x.id===it.id)) arr.push(it); });
+  if(key==='archive') sortYear(arr); else if(key!=='alive'&&key!=='dead') sortDesc(arr);
+}
+async function ensureAll(key){ try{ while(!CUR[key].done) await loadMore(key,100); }catch(e){ console.error(e); } }
 
 /* ---------- ضغط الصورة قبل الحفظ ---------- */
 function compress(file,max,type,limit){
@@ -696,21 +832,21 @@ function bindPickers(){
 /* ---------- عرض الموقع ---------- */
 const PH_ICON='<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>';
 const pic=(u,alt)=>safeImg(u)?`<img class="pic" data-zoom src="${esc(safeImg(u))}" alt="${esc(alt)}" loading="lazy">`:'';
-const wa=t=>`<button class="wa" data-wa="${esc(t)}">مشاركة عبر واتساب</button>`;
+const wa=(k,id,t)=>`<button class="wa" data-wa="${esc(t)}" data-k="${k}" data-id="${esc(id)}">مشاركة عبر واتساب</button>`;
 const personCard=g=>`<div class="card person">${safeImg(g.img)?`<img data-zoom src="${esc(safeImg(g.img))}" alt="${esc(g.name)}">`:`<div class="noimg">${esc((g.name||'').charAt(0))}</div>`}<h3>${esc(g.name)}</h3>${g.role?`<div class="role">${esc(g.role)}</div>`:''}${g.bio?`<p>${esc(g.bio)}</p>`:''}</div>`;
 const newsCard=n=>`
-  <article class="card news-card">${pic(n.img,n.title)}
-    <div class="b"><div class="date">${fmt(n.date)}<span class="tagb t-${esc(n.tag||'عام')}">${esc(n.tag||'عام')}</span></div><h3>${esc(n.title)}</h3><p>${esc(n.body)}</p>${wa(n.title)}</div>
+  <article class="card news-card" id="n-${n.id}">${pic(n.img,n.title)}
+    <div class="b"><div class="date">${fmt(n.date)}<span class="tagb t-${esc(n.tag||'عام')}">${esc(n.tag||'عام')}</span></div><h3>${esc(n.title)}</h3><p>${esc(n.body)}</p>${wa('news',n.id,n.title)}</div>
   </article>`;
 const statusCls=st=>st==='مكتمل'?'done':st==='مخطط'?'plan':'';
 const donBox=()=>{ const s=S.settings; if(!(s.donName||s.donAcc||s.donPhone)) return ''; const r=(l,v,cp)=>v?`<div class="r"><span>${l}: <b dir="ltr">${esc(v)}</b></span>${cp?`<button class="cp" data-cp="${esc(v)}">نسخ</button>`:''}</div>`:'';
   return `<details class="don"><summary>تبرع للمشروع</summary>${r('اسم صاحب الحساب',s.donName)}${r(s.donApp||'رقم الحساب',s.donAcc,1)}${r('الهاتف',s.donPhone,1)}</details>`; };
 const projCard=p=>`
-  <div class="card proj">${pic(p.img,p.title)}
+  <div class="card proj" id="p-${p.id}">${pic(p.img,p.title)}
     <div class="b"><span class="tag ${statusCls(p.status)}">${esc(p.status)}</span>
     <h3>${esc(p.title)}</h3><p>${esc(p.desc)}</p>
     <div class="bar"><i style="width:${Number(p.pct)||0}%"></i></div>
-    <div class="pct"><span>${Number(p.pct)||0}% منجز</span><span>آخر تحديث: ${fmt(p.date)}</span></div>${wa(p.title)}${p.status!=='مكتمل'?donBox():''}</div>
+    <div class="pct"><span>${Number(p.pct)||0}% منجز</span><span>آخر تحديث: ${fmt(p.date)}</span></div>${wa('projects',p.id,p.title)}${p.status!=='مكتمل'?donBox():''}</div>
   </div>`;
 const archCard=a=>`
   <figure>${safeImg(a.img)?`<img class="ph" data-zoom src="${esc(safeImg(a.img))}" alt="${esc(a.title)}" data-cap="${esc((a.year?a.year+' — ':'')+a.title)}" loading="lazy">`:`<div class="noimg">${PH_ICON}</div>`}
@@ -719,7 +855,22 @@ const archCard=a=>`
 
 function logoInner(s){ return safeImg(s.logo)?`<img src="${esc(safeImg(s.logo))}" alt="">`:esc((s.name||'ق').trim().charAt(0)); }
 
+const artById=id=>S.articles.find(a=>a.id===id);
+const excerpt=(t,n=150)=>{ t=String(t||'').replace(/\s+/g,' ').trim(); return t.length>n?t.slice(0,n).replace(/\s\S*$/,'')+'…':t; };
+const artMeta=a=>`${a.author?esc(a.author)+' · ':''}${fmt(a.date)}`;
+function renderArticles(){
+  const L=S.articles, cur=(artSel&&artById(artSel))||L[0];
+  const fa=$('#featArtSec'); fa.hidden=!L.length;
+  if(L.length) $('#featArt').innerHTML=`<div class="card art-feat"><div class="k">المقالات</div><h3>${esc(L[0].title)}</h3><div class="art-meta" style="margin:0">${artMeta(L[0])}</div><p>${esc(excerpt(L[0].body))}</p><a class="btn" href="#articles/${esc(L[0].id)}">اقرأ المقال</a></div>`;
+  if(!cur){ $('#artMain').innerHTML='<div class="empty">سيُضاف أول مقال قريباً.</div>'; $('#artPrevBox').hidden=true; return; }
+  const back=artSel&&L[0]&&cur.id!==L[0].id?'<a href="#articles" style="color:var(--green);font-weight:700">← أحدث مقال</a>':'';
+  $('#artMain').innerHTML=`<article class="card art-main" id="a-${esc(cur.id)}">${back}${pic(cur.img,cur.title)}<h1>${esc(cur.title)}</h1><div class="art-meta">${artMeta(cur)}</div><div class="art-body">${esc(cur.body)}</div>${wa('articles',cur.id,cur.title)}</article>`;
+  const prev=L.filter(a=>a.id!==cur.id);
+  $('#artPrevBox').hidden=!prev.length; $('#artMore').hidden=CUR.articles.done;
+  $('#artList').innerHTML=prev.map(a=>`<a class="art-item" href="#articles/${esc(a.id)}"><b>${esc(a.title)}</b><span>${artMeta(a)}</span><p>${esc(excerpt(a.body,110))}</p></a>`).join('');
+}
 function renderSite(){
+  renderArticles();
   const s=S.settings;
   document.title=s.name+' — الموقع الرسمي';
   let ic=document.querySelector('link[rel=icon]');
@@ -728,28 +879,31 @@ function renderSite(){
   $('#brand').textContent=s.name; $('#heroName').textContent=s.name; $('#footName').textContent=s.name;
   $('#brandLogo').innerHTML=logoInner(s); $('#heroLogo').innerHTML=logoInner(s);
   $('#heroTag').textContent=s.tagline||''; $('#yr').textContent=new Date().getFullYear();
-  const pr=S.projects, done=pr.filter(p=>p.status==='مكتمل').length, avg=pr.length?Math.round(pr.reduce((a,p)=>a+(Number(p.pct)||0),0)/pr.length):0;
-  $('#stats').innerHTML=[[pr.length,'مشروع'],[done,'مكتمل'],[avg+'%','الإنجاز'],[S.news.length,'خبر']].map(x=>`<div class="stat"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');
-  const ft=pr.filter(p=>p.status!=='مكتمل').sort((a,b)=>(Number(b.pct)||0)-(Number(a.pct)||0))[0];
+  const pr=S.projects, stt=S.stats||calcStats(pr);
+  $('#stats').innerHTML=[[stt.count,'مشروع'],[stt.done,'مكتمل'],[stt.avg+'%','الإنجاز']].map(x=>`<div class="stat"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');
+  const ft=stt.feat;
   $('#featSec').hidden=!ft;
+  if(!ft) $('#featProj').innerHTML='';
   if(ft) $('#featProj').innerHTML=`<div class="card feat"><div class="k">أقرب مشروع للإنجاز</div><h3 style="font-size:20px;margin:2px 0">${esc(ft.title)}</h3><div class="bar"><i style="width:${Math.min(100,Number(ft.pct)||0)}%"></i></div><div class="pct"><span>${Number(ft.pct)||0}% منجز</span><a href="#projects" style="color:var(--green);font-weight:700">تفاصيل المشروع</a></div>${donBox()}</div>`;
   const hero=$('#hero');
   hero.style.backgroundImage=safeImg(s.cover)?`linear-gradient(rgba(6,47,82,.72),rgba(6,47,82,.88)),url("${safeImg(s.cover)}")`:'';
   $('#historyBox').innerHTML=String(s.history||'').split(/\n\s*\n/).map(p=>`<p>${esc(p).replace(/\n/g,'<br>')}</p>`).join('');
   const noNews='<div class="empty">لا توجد أخبار حالياً.</div>', noProj='<div class="empty">لا توجد مشاريع حالياً.</div>';
   const fn=S.news.filter(n=>(newsTag==='الكل'||(n.tag||'عام')===newsTag)&&hit(newsQ,n.title,n.body,n.tag));
-  $('#newsGrid').innerHTML=fn.length?fn.slice(0,newsShown).map(newsCard).join(''):(S.news.length?'<div class="empty">لا نتائج مطابقة.</div>':noNews);
-  $('#newsMore').hidden=fn.length<=newsShown;
+  $('#newsGrid').innerHTML=fn.length?fn.map(newsCard).join(''):(S.news.length?'<div class="empty">لا نتائج مطابقة.</div>':noNews);
+  $('#newsMore').hidden=CUR.news.done||newsTag!=='الكل'||!!newsQ.trim();
   $('#newsTags').innerHTML=['الكل',...TAGS].map(t=>`<button data-tag="${t}" class="${t===newsTag?'on':''}">${t}</button>`).join('');
   $('#homeNews').innerHTML=S.news.length?S.news.slice(0,3).map(newsCard).join(''):noNews;
   const fp=S.projects.filter(p=>hit(projQ,p.title,p.desc,p.status));
   $('#projGrid').innerHTML=fp.length?fp.map(projCard).join(''):(S.projects.length?'<div class="empty">لا نتائج مطابقة.</div>':noProj);
+  $('#projMore').hidden=CUR.projects.done||!!projQ.trim();
   $('#homeProj').innerHTML=S.projects.length?S.projects.slice(0,3).map(projCard).join(''):noProj;
-  $('#archMore').hidden=S.archive.length<=archShown;
-  $('#archGrid').innerHTML=S.archive.length?S.archive.slice(0,archShown).map(archCard).join(''):'<div class="empty">الأرشيف فارغ حالياً.</div>';
+  $('#archMore').hidden=CUR.archive.done;
+  $('#archGrid').innerHTML=S.archive.length?S.archive.map(archCard).join(''):'<div class="empty">الأرشيف فارغ حالياً.</div>';
   const alive=S.people.filter(g=>!g.dead), dead=S.people.filter(g=>g.dead);
   $('#peopleGrid').innerHTML=alive.length?alive.map(personCard).join(''):(dead.length?'':'<div class="empty">سيتم إضافة شخصيات القرية قريباً.</div>');
   $('#memBox').hidden=!dead.length; $('#memGrid').innerHTML=dead.map(personCard).join('');
+  $('#peopleMore').hidden=CUR.alive.done; $('#memMore').hidden=CUR.dead.done;
   const bar=$('#alertBar'), al=s.alertText&&s.alertOn&&(!s.alertEnd||s.alertEnd>=today());
   bar.hidden=!al; bar.textContent=al?s.alertText:'';
   const ph=(s.adminPhone||'').replace(/\D/g,'');
@@ -775,8 +929,10 @@ function bindLightbox(){
 
 /* ---------- لوحة المسؤول ---------- */
 const thumb=u=>safeImg(u)?`<img class="thumb" src="${esc(safeImg(u))}" alt="">`:`<span class="thumb"></span>`;
+function renderArtAdmin(){ $('#rList').innerHTML=S.articles.length?S.articles.map(a=>`<div class="item"><div class="l">${thumb(a.img)}<div><b>${esc(a.title)}</b><span class="date">${fmt(a.date)}</span></div></div><div class="btns"><button class="btn sec sm" data-e="articles" data-id="${esc(a.id)}">تعديل</button><button class="btn danger sm" data-d="articles" data-id="${esc(a.id)}">حذف</button></div></div>`).join(''):'<div class="empty">لا توجد مقالات.</div>'; }
+function resetArt(){ ['rId','rTitle','rAuthor','rBody'].forEach(i=>$('#'+i).value=''); $('#rDate').value=today(); setPic('r',''); $('#rFormTitle').textContent='إضافة مقال'; $('#rCancel').hidden=true; }
 function renderAdminLists(){
-  renderPeopleAdmin();
+  renderPeopleAdmin(); renderArtAdmin();
   $('#nList').innerHTML=S.news.length?S.news.map(n=>`
     <div class="item"><div class="l">${thumb(n.img)}<div><b>${esc(n.title)}</b><span class="date">${fmt(n.date)}</span></div></div>
     <div class="btns"><button class="btn sec sm" data-e="news" data-id="${esc(n.id)}">تعديل</button>
@@ -801,20 +957,101 @@ function fillAbout(){
 function resetNews(){ $('#nId').value='';$('#nTitle').value='';$('#nBody').value='';$('#nTag').value='عام';setPic('n','');$('#nDate').value=today();$('#nFormTitle').textContent='إضافة خبر';$('#nCancel').hidden=true }
 function resetProj(){ $('#pId').value='';$('#pTitle').value='';$('#pDesc').value='';$('#pStatus').value='قيد التنفيذ';$('#pPct').value=0;$('#pPctOut').textContent=0;$('#pDate').value=today();setPic('p','');$('#pFormTitle').textContent='إضافة مشروع';$('#pCancel').hidden=true }
 function resetArch(){ $('#aId').value='';$('#aTitle').value='';$('#aYear').value='';$('#aDesc').value='';setPic('a','');$('#aFormTitle').textContent='إضافة صورة للأرشيف';$('#aCancel').hidden=true }
-async function refresh(){ await loadAll(); renderSite(); renderAdminLists(); }
+async function refresh(){ await loadFull(); await updateStats(); renderSite(); renderAdminLists(); }
+const GA_ID='G-N99DFKJ2V3';
+const gaGate=()=>{ window['ga-disable-'+GA_ID]=/^#admin/.test(location.hash); };
+const track=(n,p)=>{ try{ if(window.gtag&&!window['ga-disable-'+GA_ID]) gtag('event',n,p||{}); }catch(e){} };
+const busy=on=>{ const b=$('#busy'); if(b) b.hidden=!on; };
+const COLS={news:['title','date','tag','body','img'],projects:['title','desc','status','pct','date','img'],articles:['title','author','date','body','img'],people:['name','role','bio','dead','img'],archive:['title','year','desc','img']};
+const SET_KEYS=['name','tagline','history','phone','email','address','mapUrl','adminName','adminPhone','donName','donApp','donAcc','donPhone','alertText','alertEnd','alertOn','logo','cover'];
+const COL_AR={news:'الأخبار',projects:'المشاريع',articles:'المقالات',people:'الشخصيات',archive:'الأرشيف'};
+function cleanItem(col,o){
+  if(!o||typeof o!=='object') return null;
+  const id=String(o.id||''); if(!/^[A-Za-z0-9_-]{3,60}$/.test(id)) return null;
+  const out={id};
+  for(const f of COLS[col]){
+    let v=o[f];
+    if(f==='pct') v=Math.max(0,Math.min(100,Number(v)||0));
+    else if(f==='dead') v=!!v;
+    else { v=v==null?'':String(v).slice(0,f==='img'?400000:50000); if(f==='img'&&v&&!/^data:image\//.test(v)) v=''; }
+    out[f]=v;
+  }
+  if(!(out.title||out.name)) return null;
+  return out;
+}
+function cleanSettings(o){
+  const out={}; if(!o||typeof o!=='object') return out;
+  for(const k of SET_KEYS){ if(!(k in o)) continue; const v=o[k]; if(k==='alertOn') out[k]=!!v; else if(typeof v==='string'){ let t=v.slice(0,(k==='logo'||k==='cover')?900000:20000); if((k==='logo'||k==='cover')&&t&&!/^data:image\//.test(t)) t=''; out[k]=t; } }
+  return out;
+}
+let BK=null, RS=null;
+function bindBackup(){
+  const ymd=()=>new Date().toISOString().slice(0,10);
+  $('#bkMake').onclick=()=>guarded(async()=>{
+    await loadFull();
+    const data={app:'alfagousa-village',version:1,date:new Date().toISOString(),settings:S.settings,news:S.news,projects:S.projects,articles:S.articles,people:S.people,archive:S.archive};
+    const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
+    BK={blob,file:new File([blob],'alfagousa-backup-'+ymd()+'.json',{type:'application/json'})};
+    $('#bkInfo').textContent='جاهزة: '+S.news.length+' خبر، '+S.projects.length+' مشروع، '+S.articles.length+' مقال، '+S.people.length+' شخصية، '+S.archive.length+' صورة أرشيف — الحجم '+(blob.size/1048576).toFixed(1)+' م.ب';
+    $('#bkReady').hidden=false;
+  },'تم تجهيز النسخة');
+  $('#bkShare').onclick=async()=>{ if(!BK) return;
+    try{ if(navigator.canShare&&navigator.canShare({files:[BK.file]})) await navigator.share({files:[BK.file],title:'نسخة احتياطية'}); else $('#bkDown').click(); }catch(e){ if(e&&e.name!=='AbortError') $('#bkDown').click(); } };
+  $('#bkDown').onclick=()=>{ if(!BK) return; const a=document.createElement('a'); a.href=URL.createObjectURL(BK.blob); a.download=BK.file.name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500); };
+  $('#rsFile').onchange=async e=>{
+    const f=e.target.files[0]; e.target.value=''; if(!f) return;
+    if(f.size>40*1048576) return toast('الملف كبير جداً');
+    busy(true);
+    try{
+      let d; try{ d=JSON.parse(await f.text()); }catch(x){ return toast('الملف غير صالح'); }
+      if(!d||d.app!=='alfagousa-village'||d.version!==1) return toast('هذا ليس ملف نسخة احتياطية لهذا الموقع');
+      await loadFull();
+      const ops=[], rows=[];
+      for(const col of Object.keys(COLS)){
+        const cur=new Map(S[col].map(x=>[x.id,x])); let add=0,upd=0,same=0,bad=0;
+        for(const raw of (Array.isArray(d[col])?d[col]:[])){
+          const it=cleanItem(col,raw); if(!it){ bad++; continue; }
+          const c=cur.get(it.id);
+          if(!c){ add++; ops.push({col,item:it}); }
+          else if(COLS[col].some(k=>JSON.stringify(c[k]??(k==='pct'?0:k==='dead'?false:''))!==JSON.stringify(it[k]))){ upd++; ops.push({col,item:it}); }
+          else same++;
+        }
+        rows.push('<li>'+COL_AR[col]+': يُضاف '+add+'، ويُحدَّث '+upd+'، دون تغيير '+same+(bad?'، متجاهَل '+bad:'')+'</li>');
+      }
+      const st=cleanSettings(d.settings);
+      RS={ops,st};
+      $('#rsPreview').innerHTML='<b>معاينة الاسترجاع (دمج بلا حذف):</b><ul style="padding-right:20px">'+rows.join('')+'</ul>'+
+        (Object.keys(st).length?'<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="rsSet" style="width:auto" checked> استرجاع الإعدادات (التواصل والتبرع والتنبيه)</label>':'')+
+        '<div class="actions" style="margin-top:10px"><button class="btn" id="rsGo">تنفيذ الاسترجاع</button><button class="btn sec" id="rsNo">إلغاء</button></div>';
+      $('#rsPreview').hidden=false;
+      $('#rsNo').onclick=()=>{ RS=null; $('#rsPreview').hidden=true; };
+      $('#rsGo').onclick=()=>guarded(async()=>{
+        if(!RS) return;
+        for(const o of RS.ops) await DB.upsert(o.col,o.item);
+        const sc=$('#rsSet'); if(sc&&sc.checked&&Object.keys(RS.st).length) await DB.saveSettings({...S.settings,...RS.st});
+        RS=null; $('#rsPreview').hidden=true;
+        if(sc&&sc.checked){ S.settings=await DB.getSettings(); fillAbout(); }
+        await refresh();
+      },'تم الاسترجاع ✓');
+    }catch(x){ console.error(x); toast('تعذّرت قراءة الملف'); }
+    finally{ busy(false); }
+  };
+}
 async function guarded(fn,okMsg){
+  busy(true);
   try{ await fn(); toast(okMsg||'تم الحفظ ✓'); }
   catch(e){
     console.error(e);
-    toast(e && e.message==='quota' ? 'امتلأت مساحة التخزين التجريبي، استخدم صوراً أقل' : 'حدث خطأ، حاول مرة أخرى');
+    toast(e && e.message==='quota' ? 'امتلأت مساحة التخزين التجريبي، استخدم صوراً أقل' : (e && e.message==='offline' ? 'لا يوجد اتصال بالخادم، حاول لاحقاً' : 'حدث خطأ، حاول مرة أخرى'));
   }
+  finally{ busy(false); }
 }
 
 function bindAdmin(){
   $('#tabs').onclick=e=>{
     const b=e.target.closest('button'); if(!b) return;
     document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
-    ['news','projects','people','archive','about'].forEach(t=>$('#tab-'+t).hidden=(t!==b.dataset.t));
+    ['news','projects','articles','people','archive','backup','about'].forEach(t=>$('#tab-'+t).hidden=(t!==b.dataset.t));
   };
   $('#pPct').oninput=e=>$('#pPctOut').textContent=e.target.value;
 
@@ -844,23 +1081,30 @@ function bindAdmin(){
     });
   };
   $('#aCancel').onclick=resetArch;
+  document.addEventListener('toggle',e=>{ if(e.target.matches&&e.target.matches('details.don')&&e.target.open) track('donation_view'); },true);
+  bindBackup();
+  $('#rCancel').onclick=resetArt;
+  $('#rSave').onclick=()=>{
+    const title=$('#rTitle').value.trim(), body=$('#rBody').value.trim(); if(!title||!body) return toast('اكتب العنوان والنص');
+    guarded(async()=>{ await DB.save('articles',{id:$('#rId').value||undefined,title,author:$('#rAuthor').value.trim(),date:$('#rDate').value||today(),body,img:PIC.r||''}); resetArt(); await refresh(); });
+  };
   $('#gCancel').onclick=resetPeople;
   $('#gSave').onclick=()=>{
     const name=$('#gName').value.trim(); if(!name) return toast('اكتب الاسم');
     guarded(async()=>{ await DB.save('people',{id:$('#gId').value||undefined,name,role:$('#gRole').value.trim(),bio:$('#gBio').value.trim(),dead:$('#gDead').checked,img:PIC.g||''}); resetPeople(); await refresh(); });
   };
   $('#nTag').innerHTML=TAGS.map(t=>`<option>${t}</option>`).join('');
-  $('#newsQ').oninput=e=>{ newsQ=e.target.value; newsShown=10; renderSite(); $('#newsQ').focus(); };
-  $('#projQ').oninput=e=>{ projQ=e.target.value; renderSite(); };
+  $('#newsQ').oninput=async e=>{ newsQ=e.target.value; if(newsQ.trim()) await ensureAll('news'); renderSite(); };
+  $('#projQ').oninput=async e=>{ projQ=e.target.value; if(projQ.trim()) await ensureAll('projects'); renderSite(); };
   document.addEventListener('click',e=>{
-    const t=e.target.closest('[data-tag]'); if(t){ newsTag=t.dataset.tag; newsShown=10; renderSite(); }
-    const c=e.target.closest('[data-cp]'); if(c){ try{ navigator.clipboard.writeText(c.dataset.cp); toast('تم النسخ'); }catch(x){ toast('تعذّر النسخ'); } }
+    const t=e.target.closest('[data-tag]'); if(t){ newsTag=t.dataset.tag; (async()=>{ if(newsTag!=='الكل') await ensureAll('news'); renderSite(); })(); }
+    const c=e.target.closest('[data-cp]'); if(c){ track('donation_copy'); try{ navigator.clipboard.writeText(c.dataset.cp); toast('تم النسخ'); }catch(x){ toast('تعذّر النسخ'); } }
   });
   $('#moreBtn').onclick=()=>{ $('#moreSheet').hidden=false; };
   $('#moreSheet').onclick=e=>{ if(e.target.id==='moreSheet'||e.target.closest('a')) $('#moreSheet').hidden=true; };
-  $('#newsMore').onclick=()=>{ newsShown+=10; renderSite(); };
-  $('#archMore').onclick=()=>{ archShown+=12; renderSite(); };
-  document.addEventListener('click',e=>{ const w=e.target.closest('[data-wa]'); if(w) window.open('https://wa.me/?text='+encodeURIComponent(w.dataset.wa+'\n'+location.href.split('#')[0]+'\n— '+(S.settings.name||'')),'_blank'); });
+  const moreBtn=(sel,key)=>{ $(sel).onclick=async()=>{ busy(true); try{ await loadMore(key); renderSite(); }catch(e){ console.error(e); toast('تعذّر التحميل، حاول مرة أخرى'); } finally{ busy(false); } }; };
+  moreBtn('#newsMore','news'); moreBtn('#projMore','projects'); moreBtn('#archMore','archive'); moreBtn('#peopleMore','alive'); moreBtn('#memMore','dead'); moreBtn('#artMore','articles');
+  document.addEventListener('click',e=>{ const w=e.target.closest('[data-wa]'); if(w){ track('share',{method:'whatsapp',content_type:w.dataset.k,item_id:w.dataset.id}); window.open('https://wa.me/?text='+encodeURIComponent(w.dataset.wa+'\n'+location.href.split('#')[0]+'#'+w.dataset.k+'/'+w.dataset.id+'\n— '+(S.settings.name||'')),'_blank'); } });
   $('#sSave').onclick=()=>guarded(async()=>{
     await DB.saveSettings({name:$('#sName').value.trim()||'قرية الفقوسة',tagline:$('#sTag').value.trim(),history:$('#sHist').value.trim(),phone:$('#sPhone').value.trim(),email:$('#sEmail').value.trim(),address:$('#sAddr').value.trim(),mapUrl:$('#sMap').value.trim(),donName:$('#sDonName').value.trim(),donApp:$('#sDonApp').value.trim(),donAcc:$('#sDonAcc').value.trim(),donPhone:$('#sDonPhone').value.trim(),adminName:$('#sAdmName').value.trim(),adminPhone:$('#sAdmPhone').value.trim(),alertText:$('#sAlert').value.trim(),alertEnd:$('#sAlertEnd').value,alertOn:$('#sAlertOn').checked,logo:PIC.logo||'',cover:PIC.cover||''});
     await refresh();
@@ -878,6 +1122,10 @@ function bindAdmin(){
         const p=S.projects.find(x=>x.id===ed.dataset.id); if(!p) return;
         $('#pId').value=p.id;$('#pTitle').value=p.title;$('#pDesc').value=p.desc||'';$('#pStatus').value=p.status;$('#pPct').value=p.pct;$('#pPctOut').textContent=p.pct;$('#pDate').value=p.date||today();setPic('p',p.img);
         $('#pFormTitle').textContent='تعديل المشروع';$('#pCancel').hidden=false;$('#pTitle').scrollIntoView({behavior:'smooth',block:'center'});
+      }else if(kind==='articles'){
+        const a=S.articles.find(x=>x.id===ed.dataset.id); if(!a) return;
+        $('#rId').value=a.id;$('#rTitle').value=a.title;$('#rAuthor').value=a.author||'';$('#rDate').value=a.date||today();$('#rBody').value=a.body||'';setPic('r',a.img);
+        $('#rFormTitle').textContent='تعديل المقال';$('#rCancel').hidden=false;$('#rTitle').scrollIntoView({behavior:'smooth',block:'center'});
       }else if(kind==='people'){
         const g=S.people.find(x=>x.id===ed.dataset.id); if(!g) return;
         $('#gId').value=g.id;$('#gName').value=g.name;$('#gRole').value=g.role||'';$('#gBio').value=g.bio||'';$('#gDead').checked=!!g.dead;setPic('g',g.img);
@@ -893,28 +1141,33 @@ function bindAdmin(){
 
   $('#lBtn').onclick=async()=>{
     $('#lErr').textContent='';
+    busy(true);
     try{ await DB.login($('#lEmail').value.trim(),$('#lPass').value); $('#lPass').value=''; route(); }
     catch(e){ $('#lErr').textContent='بيانات الدخول غير صحيحة'; }
+    finally{ busy(false); }
   };
   $('#lPass').onkeydown=e=>{ if(e.key==='Enter') $('#lBtn').click() };
   $('#logoutBtn').onclick=async()=>{ await DB.logout(); location.hash='#home'; };
 }
 
 /* ---------- التوجيه (التبويبات) ---------- */
-const PAGES=['home','history','news','projects','people','archive','contact','about'];
+const PAGES=['home','history','news','articles','projects','people','archive','contact','about'];
 async function route(){
-  const h=(location.hash||'#home').slice(1);
+  const hh=(location.hash||'#home').slice(1);
+  const [h,hid]=hh.split('/');
   const isAdminRoute=h==='admin';
   $('#site').hidden=isAdminRoute; $('#admin').hidden=!isAdminRoute;
   if(isAdminRoute){
     window.scrollTo(0,0);
-    const ok=await DB.isAdmin();
+    let ok=false; try{ ok=await DB.isAdmin(); }catch(e){}
     $('#loginView').hidden=ok; $('#dashView').hidden=!ok;
     $('#demoNote').hidden=!DEMO;
-    if(ok){ fillAbout(); renderAdminLists(); resetNews(); resetProj(); resetArch(); resetPeople(); }
+    if(ok){ busy(true); try{ await loadFull(); updateStats().catch(()=>{}); }catch(e){ console.error(e); toast('تعذّر تحميل البيانات'); } finally{ busy(false); } fillAbout(); renderAdminLists(); resetNews(); resetProj(); resetArch(); resetPeople(); resetArt(); }
     return;
   }
   const p=PAGES.includes(h)?h:'home';
+  gaGate();
+  if(p==='articles'){ artSel=hid?decodeURIComponent(hid):null; if(DATA_READY){ if(artSel&&!artById(artSel)){ try{ const it=await DB.getOne('articles',artSel); if(it){ S.articles.push(it); sortDesc(S.articles); } }catch(e){} } renderArticles(); } }
   document.querySelectorAll('.page').forEach(s=>s.classList.toggle('on',s.dataset.page===p));
   document.querySelectorAll('#bnav a').forEach(a=>a.classList.toggle('on',a.dataset.page===p));
   $('#moreBtn').classList.toggle('on',!['home','news','projects'].includes(p)); $('#moreSheet').hidden=true;
@@ -923,6 +1176,14 @@ async function route(){
     if(on && a.scrollIntoView) a.scrollIntoView({inline:'center',block:'nearest'});
   });
   window.scrollTo(0,0);
+  if(hid && DATA_READY && (p==='news'||p==='projects')){
+    const id=decodeURIComponent(hid), sel=(p==='news'?'#newsGrid':'#projGrid')+' [id="'+(p==='news'?'n-':'p-')+id.replace(/"/g,'')+'"]';
+    let el=document.querySelector(sel);
+    if(!el){ const col=p==='news'?'news':'projects'; let it=null; try{ it=await DB.getOne(col,id); }catch(e){}
+      if(it){ if(!S[col].some(x=>x.id===it.id)){ S[col].push(it); sortDesc(S[col]); } newsQ=''; newsTag='الكل'; projQ=''; const q=$('#newsQ'); if(q) q.value=''; const q2=$('#projQ'); if(q2) q2.value=''; renderSite(); el=document.querySelector(sel); } }
+    if(el){ setTimeout(()=>{ el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('hl'); setTimeout(()=>el.classList.remove('hl'),2800); },150); }
+    else toast(p==='news'?'هذا الخبر غير موجود أو حُذف':'هذا المشروع غير موجود أو حُذف');
+  }
 }
 
 (function(){ const u=['muhammadjousief','gmail.com'], m=u[0]+String.fromCharCode(64)+u[1], a=$('#devMail'); a.textContent=m; a.href='mailto:'+m; })();
@@ -935,17 +1196,22 @@ async function route(){
 }catch(e){} })();
 (async function start(){
   bindPickers(); bindAdmin(); bindLightbox();
+  window.addEventListener('hashchange',route);
+  const hadCache=!DEMO&&cacheLoad();
+  if(hadCache) renderSite();
+  else { const bl=logoInner(SEED.settings); $('#brandLogo').innerHTML=bl; $('#heroLogo').innerHTML=bl; }
+  if((location.hash||'').slice(1).split('/')[0]!=='admin') route();
   try{ await loadAllRetry(); }
   catch(e){
     console.error(e); NETFAIL=true;
-    if(!cacheLoad()){ S.settings=SEED.settings; S.news=[]; S.projects=[]; S.archive=[]; S.people=[]; }
+    if(!hadCache){ S.settings=SEED.settings; S.news=[]; S.projects=[]; S.archive=[]; S.people=[]; S.articles=[]; }
     const nb=$('#netBar'); nb.hidden=false;
     nb.innerHTML='تعذّر الاتصال بالخادم، يُعرض آخر محتوى محفوظ. <button id="netRetry">إعادة المحاولة</button>';
     const again=async()=>{ try{ await loadAll(); cacheSave(); NETFAIL=false; nb.hidden=true; clearInterval(tm); renderSite(); }catch(x){} };
     const tm=setInterval(again,20000); $('#netRetry').onclick=again;
   }
+  DATA_READY=true;
   renderSite();
-  window.addEventListener('hashchange',route);
   route();
 })();
 </script>
