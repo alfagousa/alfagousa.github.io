@@ -5,11 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>قرية الفقوسة</title>
 <meta name="theme-color" content="#0a5a8c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="canonical" href="https://alfagousa.github.io/">
+<meta name="description" content="الموقع الرسمي لقرية الفقوسة: أخبار القرية ومشاريعها وأرشيفها وتاريخها.">
 <script>window['ga-disable-G-N99DFKJ2V3']=/^#admin/.test(location.hash);</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-N99DFKJ2V3"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-N99DFKJ2V3');</script>
 <meta property="og:title" content="قرية الفقوسة"><meta property="og:description" content="الموقع الرسمي لقرية الفقوسة">
-<meta property="og:type" content="website"><meta name="twitter:card" content="summary">
+<meta property="og:type" content="website"><meta property="og:url" content="https://alfagousa.github.io/"><meta property="og:site_name" content="قرية الفقوسة"><meta property="og:locale" content="ar_AR"><meta property="og:image" content="https://alfagousa.github.io/og.jpg"><meta property="og:image:width" content="600"><meta property="og:image:height" content="600"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://alfagousa.github.io/og.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -164,8 +169,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 .hero .biglogo{width:92px;height:92px;border-radius:20px;margin-bottom:10px}
 .hero h1{font-size:clamp(28px,6vw,44px);margin-bottom:4px}
 .hero p{margin-bottom:16px}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.gold{background:linear-gradient(135deg,#dba945,#b8862c);color:#231600}
 .hero::after{height:28px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:-34px;position:relative;z-index:2}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:-34px;position:relative;z-index:2}
 .stat{display:flex;flex-direction:column;justify-content:center;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 6px;text-align:center;box-shadow:0 4px 14px rgba(6,47,82,.10)}
 .stat b{display:block;font-size:26px;color:var(--green);line-height:1.3;font-weight:800}
 .stat span{font-size:14px;color:var(--muted)}
@@ -194,9 +201,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .alertbar button{margin-inline-start:8px;border:0;border-radius:12px;padding:2px 12px;font:inherit;cursor:pointer}
 .hl{animation:hl 2.6s}@keyframes hl{0%,60%{box-shadow:0 0 0 4px #e8b94a}100%{box-shadow:none}}
-#busy{position:fixed;inset:0;background:rgba(6,48,42,.45);display:grid;place-items:center;z-index:300}
+#busy{position:fixed;inset:0;background:rgba(6,47,82,.38);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);display:grid;place-items:center;z-index:300;cursor:progress;padding:16px}
 #busy[hidden]{display:none}
-#busy i{width:54px;height:54px;border:5px solid #fff;border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+#busy .bcard{background:#fff;border-radius:20px;padding:24px 30px 22px;text-align:center;box-shadow:0 14px 40px rgba(6,47,82,.35);min-width:230px;max-width:340px}
+#busy i{display:block;width:46px;height:46px;margin:0 auto 14px;border:5px solid #d3e3e6;border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
+#busy p{font-weight:700;color:var(--green-d);font-size:17px;line-height:1.7}
+#busy .dots b{display:inline-block;animation:blink 1.2s infinite both;font-size:22px;line-height:1}
+#busy .dots b:nth-child(2){animation-delay:.2s}#busy .dots b:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.15}40%{opacity:1}}
 @keyframes spin{to{transform:rotate(360deg)}}
 .skel-f{min-height:150px}
 .art-feat{border-inline-start:6px solid var(--gold);background:linear-gradient(#fffdf6,#fff)}
@@ -213,7 +225,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 <!-- ============ الموقع العام ============ -->
 <div id="site">
   <div id="netBar" class="alertbar" style="background:#7a5200" hidden></div>
-  <div id="busy" hidden><i></i></div>
   <div id="alertBar" class="alertbar" hidden></div>
   <header class="top">
     <div class="wrap">
@@ -239,9 +250,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
       <div class="biglogo" id="heroLogo"></div>
       <h1 id="heroName">قرية الفقوسة</h1>
       <p id="heroTag"></p>
-      <a class="btn" href="#news">آخر الأخبار</a>
+      <div class="hero-btns"><a class="btn" href="#news">آخر الأخبار</a><a class="btn gold" id="heroArt" href="#articles" hidden>آخر مقال</a></div>
     </div>
-    <div class="wrap"><div class="stats" id="stats"><div class="card skel" style="min-height:90px"></div><div class="card skel" style="min-height:90px"></div><div class="card skel" style="min-height:90px"></div><div class="card skel" style="min-height:90px"></div></div></div>
+    <div class="wrap"><div class="stats" id="stats"><div class="card skel" style="min-height:90px"></div><div class="card skel" style="min-height:90px"></div><div class="card skel" style="min-height:90px"></div></div></div>
     <section class="sec" id="featSec" hidden style="padding-bottom:0"><div class="wrap"><div id="featProj"></div></div></section>
     <section class="sec" id="featArtSec" hidden style="padding-bottom:0"><div class="wrap"><div id="featArt"></div></div></section>
     <section class="sec"><div class="wrap">
@@ -328,7 +339,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
       <div class="card" style="margin-top:14px"><h3>تثبيت الموقع على الهاتف</h3>
         <p><b>أندرويد (كروم):</b> القائمة ⋮ ثم «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».</p>
         <p><b>آيفون (سفاري):</b> زر المشاركة ثم «إضافة إلى الشاشة الرئيسية».</p></div>
-      <div class="card" style="margin-top:14px"><h3>الخصوصية</h3><p>يستخدم الموقع إحصاءات مجهولة لقياس عدد الزيارات وتحسين الخدمة، ولا يجمع أي بيانات شخصية عنك.</p></div>
+      <div class="card" style="margin-top:14px"><h3>الخصوصية</h3><p>يستخدم الموقع خدمة Google Analytics لإحصاءات مجهولة تقيس عدد الزيارات وتحسّن الخدمة، وقد تستخدم ملفات تعريف الارتباط (كوكيز). لا نجمع من خلال الموقع اسمك أو رقم هاتفك أو أي بيانات تعريفية عنك.</p></div>
       <div class="card dev"><h3>المطوّر</h3><b>محمد يوسف احمد مختار</b><b dir="ltr">Muhammad Jousief Ahmed Mokhtar</b><a id="devMail" href="#" dir="ltr" style="color:var(--green)"></a></div>
     </div></section>
   </main>
@@ -488,7 +499,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
           <div class="actions"><label class="btn sec sm">اختيار من الجهاز<input type="file" accept="image/*" hidden></label><button type="button" class="btn danger sm" data-clear hidden>إزالة الصورة</button></div>
         </div>
         <label>عنوان الصورة</label><input id="aTitle" placeholder="مثال: سوق القرية القديم">
-        <label>السنة أو الفترة</label><input id="aYear" placeholder="مثال: 1975">
+        <label>السنة أو الفترة</label><input id="aYear" placeholder="بالأرقام، مثال: 1975 أو 1960-1970">
         <label>التفاصيل (تظهر تحت الصورة)</label><textarea id="aDesc" style="min-height:90px" placeholder="من في الصورة؟ أين؟ ما المناسبة؟"></textarea>
         <div class="actions">
           <button class="btn" id="aSave">حفظ في الأرشيف</button>
@@ -560,6 +571,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 
 </div></div>
 
+<div id="busy" hidden role="alert" aria-live="assertive"><div class="bcard"><i></i><p><span id="busyTxt">جاري التحميل</span> <span class="dots"><b>.</b><b>.</b><b>.</b></span></p></div></div>
 <div id="lb" hidden><img alt=""><div></div></div>
 <div id="toast"></div>
 
@@ -638,19 +650,52 @@ const PG={
 let CUR={};
 const resetCur=()=>{ CUR={}; for(const k in PG) CUR[k]={last:null,done:false,idx:0}; }; resetCur();
 const sortDesc=a=>a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));
-const sortYear=a=>a.sort((x,y)=>String(x.year||'').localeCompare(String(y.year||''),'en',{numeric:true}));
+const latinDigits=s=>String(s==null?'':s).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776);
+const normYear=raw=>{ const t=latinDigits(raw).replace(/\s+/g,'').replace(/[–—−ـ]/g,'-'); if(!t) return ''; return /^[12]\d{3}(-[12]\d{3})?$/.test(t)?t:null; };
+const sortYear=a=>a.sort((x,y)=>latinDigits(x.year||'').localeCompare(latinDigits(y.year||''),'en',{numeric:true}));
 
+/* الشعار والغلاف في وثيقة منفصلة (settings/media) تُجلب فقط عند تغيّرها */
+let RAW_MAIN={}, MEDIA_CUR={logo:'',cover:'',v:0}, LEGACY=false, FULL=false;
+async function getMedia(main){
+  if(!main.mediaV){ LEGACY=!!(main.logo||main.cover); return {logo:main.logo||'',cover:main.cover||'',v:0}; }
+  let c=null; try{ c=JSON.parse(localStorage.getItem('v_media')); }catch(e){}
+  if(c&&c.v===main.mediaV) return c;
+  const d=await firebase.firestore().collection('settings').doc('media').get();
+  const x=d.exists?d.data():{};
+  const m={logo:x.logo||'',cover:x.cover||'',v:main.mediaV};
+  try{ localStorage.setItem('v_media',JSON.stringify(m)); }catch(e){}
+  return m;
+}
 const DB = {
   async getSettings(){
     if(DEMO) return {...SEED.settings,...(store.get('v_settings')||{})};
     await initFB();
     const d=await firebase.firestore().collection('settings').doc('main').get();
-    return d.exists?{...SEED.settings,...d.data()}:SEED.settings;
+    const main=d.exists?d.data():{}; RAW_MAIN=main;
+    const m=await getMedia(main); MEDIA_CUR=m;
+    return {...SEED.settings,...main,logo:m.logo||SEED.settings.logo,cover:m.cover||''};
   },
   async saveSettings(s){
     if(!DEMO&&NETFAIL) throw new Error('offline');
-    if(DEMO) return store.set('v_settings',s);
-    await initFB(); await firebase.firestore().collection('settings').doc('main').set(s);
+    if(DEMO){ store.set('v_settings',s); return s; }
+    await initFB(); const db=firebase.firestore();
+    const {logo='',cover='',...main}=s; let v=RAW_MAIN.mediaV||MEDIA_CUR.v||0;
+    if(!v||logo!==(MEDIA_CUR.logo||'')||cover!==(MEDIA_CUR.cover||'')){
+      v=Date.now(); await db.collection('settings').doc('media').set({logo,cover,v});
+      MEDIA_CUR={logo,cover,v}; try{ localStorage.setItem('v_media',JSON.stringify(MEDIA_CUR)); }catch(e){}
+    }
+    main.mediaV=v; await db.collection('settings').doc('main').set(main);
+    RAW_MAIN=main; LEGACY=false;
+    return {...main,logo,cover};
+  },
+  async migrateMedia(){
+    if(DEMO||!LEGACY) return;
+    await initFB(); const db=firebase.firestore();
+    const {logo='',cover='',...rest}=RAW_MAIN; const v=Date.now();
+    await db.collection('settings').doc('media').set({logo,cover,v});
+    rest.mediaV=v; await db.collection('settings').doc('main').set(rest);
+    RAW_MAIN=rest; MEDIA_CUR={logo,cover,v}; LEGACY=false;
+    try{ localStorage.setItem('v_media',JSON.stringify(MEDIA_CUR)); }catch(e){}
   },
   async page(key,n){
     const cfg=PG[key], size=n||cfg.n, st=CUR[key];
@@ -709,11 +754,12 @@ const DB = {
       const arr=store.get('v_'+c)||[...SEED[c]];
       if(item.id){ const i=arr.findIndex(x=>x.id===item.id); if(i>-1) arr[i]=item; else arr.push(item); }
       else { item.id=Date.now().toString(36); arr.push(item); }
-      return store.set('v_'+c,arr);
+      store.set('v_'+c,arr); return item;
     }
     await initFB();
     const {id,...data}=item; const col=firebase.firestore().collection(c);
-    return id?col.doc(id).set(data):col.add(data);
+    if(id){ await col.doc(id).set(data); return item; }
+    const r=await col.add(data); return {id:r.id,...data};
   },
   async remove(c,id){
     if(!DEMO&&NETFAIL) throw new Error('offline');
@@ -745,30 +791,50 @@ let toastT;
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600)}
 const S={settings:{},news:[],projects:[],archive:[],people:[],articles:[]};
 let artSel=null;
-let newsShown=10, archShown=12, newsQ='', newsTag='الكل', projQ='';
+let newsQ='', newsTag='الكل', projQ='';
 const TAGS=['عام','عزاء','أفراح','إعلانات','شخصيات'];
 const norm=t=>String(t||'').toLowerCase().replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');
 const hit=(q,...f)=>!q||norm(f.join(' ')).includes(norm(q));
 const CACHE='v_cache';
-function cacheSave(){ const d={settings:S.settings,stats:S.stats,news:S.news,projects:S.projects,archive:S.archive,people:S.people,articles:S.articles};
+function cacheSave(){ const d={settings:(S.settings.mediaV?{...S.settings,logo:'',cover:''}:S.settings),stats:S.stats,news:S.news,projects:S.projects,archive:S.archive,people:S.people,articles:S.articles};
   try{ localStorage.setItem(CACHE,JSON.stringify(d)); }catch(e){ try{ const l=o=>o.map(({img,...r})=>r); localStorage.setItem(CACHE,JSON.stringify({...d,news:l(d.news),projects:l(d.projects),archive:l(d.archive),people:l(d.people),articles:l(d.articles||[])})); }catch(x){} } }
-function cacheLoad(){ try{ const d=JSON.parse(localStorage.getItem(CACHE)); if(d&&d.news){ Object.assign(S,d); return true; } }catch(e){} return false; }
+function cacheLoad(){ try{ const d=JSON.parse(localStorage.getItem(CACHE)); if(d&&d.news){ Object.assign(S,d); applyMediaCache(); return true; } }catch(e){} return false; }
+function applyMediaCache(){ try{ const m=JSON.parse(localStorage.getItem('v_media')); if(m&&S.settings.mediaV){ S.settings={...S.settings,logo:m.logo||S.settings.logo||'',cover:m.cover||''}; } }catch(e){} if(!S.settings.logo) S.settings.logo=DEFAULT_LOGO; }
 async function loadAllRetry(n=3){ let last; for(let i=0;i<n;i++){ try{ await loadAll(); if(!DEMO) cacheSave(); return; }catch(e){ last=e; console.error(e); await new Promise(r=>setTimeout(r,1500*(i+1))); } } throw last; }
 function calcStats(pr){
   const done=pr.filter(p=>p.status==='مكتمل').length, avg=pr.length?Math.round(pr.reduce((a,p)=>a+(Number(p.pct)||0),0)/pr.length):0;
   const ft=pr.filter(p=>p.status!=='مكتمل').sort((a,b)=>(Number(b.pct)||0)-(Number(a.pct)||0))[0];
   return {count:pr.length,done,avg,feat:ft?{id:ft.id,title:ft.title,pct:Number(ft.pct)||0}:null};
 }
-async function updateStats(){ const st=calcStats(S.projects); await DB.putStats(st); S.stats=st; }
+async function updateStats(){ const pr=FULL?S.projects:await DB.list('projects'); const st=calcStats(pr); await DB.putStats(st); S.stats=st; }
+const LZ={news:0,projects:0,archive:0,people:0,articles:0};   /* 0 لم يُحمَّل · 1 جارٍ · 2 تمّ · 3 فشل */
+const SKEL=n=>'<div class="card skel"></div>'.repeat(n);
+const failBox=k=>`<div class="empty">تعذّر التحميل.<br><button class="btn sec sm" data-retry="${k}">إعادة المحاولة</button></div>`;
+const gate=(k,n,f)=>LZ[k]===3?failBox(k):LZ[k]<2?SKEL(n):f();
 async function loadAll(){
-  resetCur();
-  const [se,stt,news,pro,arc,art,al,de]=await Promise.all([DB.getSettings(),DB.getStats().catch(()=>null),DB.page('news'),DB.page('projects'),DB.page('archive'),DB.page('articles').catch(()=>{CUR.articles.done=true;return[]}),DB.page('alive'),DB.page('dead')]);
-  S.settings=se; S.stats=stt; S.news=sortDesc(news); S.projects=sortDesc(pro); S.archive=sortYear(arc); S.articles=sortDesc(art); S.people=[...al,...de];
+  resetCur(); for(const k in LZ) if(LZ[k]!==2) LZ[k]=0;
+  const [se,stt,news,pro,art]=await Promise.all([DB.getSettings(),DB.getStats().catch(()=>null),DB.page('news',3),DB.page('projects',3),DB.page('articles',1).catch(()=>{CUR.articles.done=true;return[]})]);
+  S.settings=se; S.stats=stt; S.news=sortDesc(news); S.projects=sortDesc(pro); S.articles=sortDesc(art);
+}
+const LAZY={
+  news:async()=>{ const need=10-S.news.length; if(need>0&&!CUR.news.done) await loadMore('news',need); },
+  projects:async()=>{ const need=10-S.projects.length; if(need>0&&!CUR.projects.done) await loadMore('projects',need); },
+  archive:()=>loadMore('archive'),
+  people:()=>Promise.all([loadMore('alive'),loadMore('dead')]),
+  articles:async()=>{ const need=5-S.articles.length; if(need>0&&!CUR.articles.done) await loadMore('articles',need); }
+};
+async function lazy(p){
+  const fn=LAZY[p]; if(!fn||LZ[p]===1||LZ[p]===2) return;
+  LZ[p]=1; renderSite();
+  try{ await fn(); LZ[p]=2; }
+  catch(e){ console.error(e); LZ[p]=3; toast('تعذّر التحميل، تحقق من الاتصال'); }
+  renderSite();
 }
 async function loadFull(){
   const [news,pro,arc,art,peo]=await Promise.all([DB.list('news'),DB.list('projects'),DB.list('archive'),DB.list('articles').catch(()=>[]),DB.list('people')]);
   S.news=news; S.projects=pro; S.archive=arc; S.articles=art; S.people=peo;
   for(const k in CUR) CUR[k].done=true;
+  for(const k in LZ) LZ[k]=2; FULL=true;
 }
 const KEYARR={news:'news',projects:'projects',archive:'archive',articles:'articles',alive:'people',dead:'people'};
 async function loadMore(key,n){
@@ -821,9 +887,10 @@ function bindPickers(){
     box.querySelector('input[type=file]').onchange=async e=>{
       const f=e.target.files[0]; if(!f) return;
       if(!/^image\//.test(f.type)){ toast('اختر ملف صورة فقط'); e.target.value=''; return; }
-      toast('جاري تجهيز الصورة…');
+      busy(true,'جاري تجهيز الصورة');
       try{ setPic(id,await compress(f,+box.dataset.max,box.dataset.type,+box.dataset.limit)); toast('تم اختيار الصورة ✓'); }
       catch(err){ console.error(err); toast('تعذّر تجهيز الصورة، جرّب صورة أخرى'); e.target.value=''; }
+      finally{ busy(false); }
     };
     box.querySelector('[data-clear]').onclick=()=>setPic(id,'');
   });
@@ -866,7 +933,7 @@ function renderArticles(){
   const back=artSel&&L[0]&&cur.id!==L[0].id?'<a href="#articles" style="color:var(--green);font-weight:700">← أحدث مقال</a>':'';
   $('#artMain').innerHTML=`<article class="card art-main" id="a-${esc(cur.id)}">${back}${pic(cur.img,cur.title)}<h1>${esc(cur.title)}</h1><div class="art-meta">${artMeta(cur)}</div><div class="art-body">${esc(cur.body)}</div>${wa('articles',cur.id,cur.title)}</article>`;
   const prev=L.filter(a=>a.id!==cur.id);
-  $('#artPrevBox').hidden=!prev.length; $('#artMore').hidden=CUR.articles.done;
+  $('#artPrevBox').hidden=!prev.length; $('#artMore').hidden=CUR.articles.done||LZ.articles<2;
   $('#artList').innerHTML=prev.map(a=>`<a class="art-item" href="#articles/${esc(a.id)}"><b>${esc(a.title)}</b><span>${artMeta(a)}</span><p>${esc(excerpt(a.body,110))}</p></a>`).join('');
 }
 function renderSite(){
@@ -879,9 +946,11 @@ function renderSite(){
   $('#brand').textContent=s.name; $('#heroName').textContent=s.name; $('#footName').textContent=s.name;
   $('#brandLogo').innerHTML=logoInner(s); $('#heroLogo').innerHTML=logoInner(s);
   $('#heroTag').textContent=s.tagline||''; $('#yr').textContent=new Date().getFullYear();
-  const pr=S.projects, stt=S.stats||calcStats(pr);
-  $('#stats').innerHTML=[[stt.count,'مشروع'],[stt.done,'مكتمل'],[stt.avg+'%','الإنجاز']].map(x=>`<div class="stat"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');
-  const ft=stt.feat;
+  const ha=$('#heroArt'); if(ha) ha.hidden=!S.articles.length;
+  const pr=S.projects, stt=S.stats;
+  $('#stats').hidden=!stt;
+  if(stt) $('#stats').innerHTML=[[stt.count,'مشروع'],[stt.done,'مكتمل'],[stt.avg+'%','الإنجاز']].map(x=>`<div class="stat"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('');
+  const ft=stt&&stt.feat;
   $('#featSec').hidden=!ft;
   if(!ft) $('#featProj').innerHTML='';
   if(ft) $('#featProj').innerHTML=`<div class="card feat"><div class="k">أقرب مشروع للإنجاز</div><h3 style="font-size:20px;margin:2px 0">${esc(ft.title)}</h3><div class="bar"><i style="width:${Math.min(100,Number(ft.pct)||0)}%"></i></div><div class="pct"><span>${Number(ft.pct)||0}% منجز</span><a href="#projects" style="color:var(--green);font-weight:700">تفاصيل المشروع</a></div>${donBox()}</div>`;
@@ -890,26 +959,27 @@ function renderSite(){
   $('#historyBox').innerHTML=String(s.history||'').split(/\n\s*\n/).map(p=>`<p>${esc(p).replace(/\n/g,'<br>')}</p>`).join('');
   const noNews='<div class="empty">لا توجد أخبار حالياً.</div>', noProj='<div class="empty">لا توجد مشاريع حالياً.</div>';
   const fn=S.news.filter(n=>(newsTag==='الكل'||(n.tag||'عام')===newsTag)&&hit(newsQ,n.title,n.body,n.tag));
-  $('#newsGrid').innerHTML=fn.length?fn.map(newsCard).join(''):(S.news.length?'<div class="empty">لا نتائج مطابقة.</div>':noNews);
-  $('#newsMore').hidden=CUR.news.done||newsTag!=='الكل'||!!newsQ.trim();
+  $('#newsGrid').innerHTML=gate('news',3,()=>fn.length?fn.map(newsCard).join(''):(S.news.length?'<div class="empty">لا نتائج مطابقة.</div>':noNews));
+  $('#newsMore').hidden=LZ.news<2||CUR.news.done||newsTag!=='الكل'||!!newsQ.trim();
   $('#newsTags').innerHTML=['الكل',...TAGS].map(t=>`<button data-tag="${t}" class="${t===newsTag?'on':''}">${t}</button>`).join('');
   $('#homeNews').innerHTML=S.news.length?S.news.slice(0,3).map(newsCard).join(''):noNews;
   const fp=S.projects.filter(p=>hit(projQ,p.title,p.desc,p.status));
-  $('#projGrid').innerHTML=fp.length?fp.map(projCard).join(''):(S.projects.length?'<div class="empty">لا نتائج مطابقة.</div>':noProj);
-  $('#projMore').hidden=CUR.projects.done||!!projQ.trim();
+  $('#projGrid').innerHTML=gate('projects',3,()=>fp.length?fp.map(projCard).join(''):(S.projects.length?'<div class="empty">لا نتائج مطابقة.</div>':noProj));
+  $('#projMore').hidden=LZ.projects<2||CUR.projects.done||!!projQ.trim();
   $('#homeProj').innerHTML=S.projects.length?S.projects.slice(0,3).map(projCard).join(''):noProj;
-  $('#archMore').hidden=CUR.archive.done;
-  $('#archGrid').innerHTML=S.archive.length?S.archive.map(archCard).join(''):'<div class="empty">الأرشيف فارغ حالياً.</div>';
+  $('#archMore').hidden=LZ.archive<2||CUR.archive.done;
+  $('#archGrid').innerHTML=gate('archive',4,()=>S.archive.length?S.archive.map(archCard).join(''):'<div class="empty">الأرشيف فارغ حالياً.</div>');
   const alive=S.people.filter(g=>!g.dead), dead=S.people.filter(g=>g.dead);
-  $('#peopleGrid').innerHTML=alive.length?alive.map(personCard).join(''):(dead.length?'':'<div class="empty">سيتم إضافة شخصيات القرية قريباً.</div>');
-  $('#memBox').hidden=!dead.length; $('#memGrid').innerHTML=dead.map(personCard).join('');
-  $('#peopleMore').hidden=CUR.alive.done; $('#memMore').hidden=CUR.dead.done;
+  $('#peopleGrid').innerHTML=gate('people',3,()=>alive.length?alive.map(personCard).join(''):(dead.length?'':'<div class="empty">سيتم إضافة شخصيات القرية قريباً.</div>'));
+  const pOk=LZ.people===2;
+  $('#memBox').hidden=!pOk||!dead.length; $('#memGrid').innerHTML=pOk?dead.map(personCard).join(''):'';
+  $('#peopleMore').hidden=!pOk||CUR.alive.done; $('#memMore').hidden=!pOk||CUR.dead.done;
   const bar=$('#alertBar'), al=s.alertText&&s.alertOn&&(!s.alertEnd||s.alertEnd>=today());
   bar.hidden=!al; bar.textContent=al?s.alertText:'';
   const ph=(s.adminPhone||'').replace(/\D/g,'');
   const adm=(s.adminName||ph)?`<div class="card" style="margin-bottom:14px;grid-column:1/-1"><b>مسؤول الصفحة</b>${esc(s.adminName||'')} <span dir="ltr">${esc(s.adminPhone||'')}</span>${ph?`<div><a class="btn sm2" href="tel:+${ph}">اتصال</a><a class="btn sm2" style="background:#25d366" href="https://wa.me/${ph}">واتساب</a></div>`:''}</div>`:'';
   $('#aboutAdmin').innerHTML=adm?adm.replace('<b>مسؤول الصفحة</b>',''):'<div class="empty">لم يُضف بعد.</div>';
-  const mapU=s.mapUrl||('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent((s.address||'')+' '+(s.name||'')));
+  const mapU=/^https:\/\//i.test(s.mapUrl||'')?s.mapUrl:('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent((s.address||'')+' '+(s.name||'')));
   const c=[['البريد',s.email],['الهاتف',s.phone]].filter(x=>x[1]).map(x=>`<div class="card"><b>${x[0]}</b>${esc(x[1])}</div>`);
   if(adm) c.unshift(adm);
   c.push(`<div class="card"><b>الموقع</b>${esc(s.address||'محلية 24 القرشي، ولاية الجزيرة')}<div><a class="btn sm2" target="_blank" rel="noopener" href="${esc(mapU)}">افتح على خرائط جوجل</a></div></div>`);
@@ -961,7 +1031,6 @@ async function refresh(){ await loadFull(); await updateStats(); renderSite(); r
 const GA_ID='G-N99DFKJ2V3';
 const gaGate=()=>{ window['ga-disable-'+GA_ID]=/^#admin/.test(location.hash); };
 const track=(n,p)=>{ try{ if(window.gtag&&!window['ga-disable-'+GA_ID]) gtag('event',n,p||{}); }catch(e){} };
-const busy=on=>{ const b=$('#busy'); if(b) b.hidden=!on; };
 const COLS={news:['title','date','tag','body','img'],projects:['title','desc','status','pct','date','img'],articles:['title','author','date','body','img'],people:['name','role','bio','dead','img'],archive:['title','year','desc','img']};
 const SET_KEYS=['name','tagline','history','phone','email','address','mapUrl','adminName','adminPhone','donName','donApp','donAcc','donPhone','alertText','alertEnd','alertOn','logo','cover'];
 const COL_AR={news:'الأخبار',projects:'المشاريع',articles:'المقالات',people:'الشخصيات',archive:'الأرشيف'};
@@ -994,14 +1063,14 @@ function bindBackup(){
     BK={blob,file:new File([blob],'alfagousa-backup-'+ymd()+'.json',{type:'application/json'})};
     $('#bkInfo').textContent='جاهزة: '+S.news.length+' خبر، '+S.projects.length+' مشروع، '+S.articles.length+' مقال، '+S.people.length+' شخصية، '+S.archive.length+' صورة أرشيف — الحجم '+(blob.size/1048576).toFixed(1)+' م.ب';
     $('#bkReady').hidden=false;
-  },'تم تجهيز النسخة');
+  },'تم تجهيز النسخة','جاري تجهيز النسخة',300000);
   $('#bkShare').onclick=async()=>{ if(!BK) return;
     try{ if(navigator.canShare&&navigator.canShare({files:[BK.file]})) await navigator.share({files:[BK.file],title:'نسخة احتياطية'}); else $('#bkDown').click(); }catch(e){ if(e&&e.name!=='AbortError') $('#bkDown').click(); } };
   $('#bkDown').onclick=()=>{ if(!BK) return; const a=document.createElement('a'); a.href=URL.createObjectURL(BK.blob); a.download=BK.file.name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500); };
   $('#rsFile').onchange=async e=>{
     const f=e.target.files[0]; e.target.value=''; if(!f) return;
     if(f.size>40*1048576) return toast('الملف كبير جداً');
-    busy(true);
+    busy(true,'جاري قراءة الملف');
     try{
       let d; try{ d=JSON.parse(await f.text()); }catch(x){ return toast('الملف غير صالح'); }
       if(!d||d.app!=='alfagousa-village'||d.version!==1) return toast('هذا ليس ملف نسخة احتياطية لهذا الموقع');
@@ -1032,20 +1101,40 @@ function bindBackup(){
         RS=null; $('#rsPreview').hidden=true;
         if(sc&&sc.checked){ S.settings=await DB.getSettings(); fillAbout(); }
         await refresh();
-      },'تم الاسترجاع ✓');
+      },'تم الاسترجاع ✓','جاري الاسترجاع',900000);
     }catch(x){ console.error(x); toast('تعذّرت قراءة الملف'); }
     finally{ busy(false); }
   };
 }
-async function guarded(fn,okMsg){
-  busy(true);
-  try{ await fn(); toast(okMsg||'تم الحفظ ✓'); }
-  catch(e){
-    console.error(e);
-    toast(e && e.message==='quota' ? 'امتلأت مساحة التخزين التجريبي، استخدم صوراً أقل' : (e && e.message==='offline' ? 'لا يوجد اتصال بالخادم، حاول لاحقاً' : 'حدث خطأ، حاول مرة أخرى'));
-  }
-  finally{ busy(false); }
+let RUN=false, busyT=null;
+const busy=(on,msg)=>{
+  const b=$('#busy'); if(!b) return; clearTimeout(busyT);
+  document.documentElement.style.overflow=on?'hidden':'';
+  if(on){ $('#busyTxt').textContent=msg||'جاري التحميل'; b.hidden=false;
+    busyT=setTimeout(()=>{ $('#busyTxt').textContent='الشبكة بطيئة، يرجى الانتظار وعدم إغلاق الصفحة'; },8000); }
+  else b.hidden=true;
+};
+function errMsg(e){
+  const c=(e&&e.code)||'', m=(e&&e.message)||'';
+  if(m==='quota') return 'امتلأت مساحة التخزين التجريبي، استخدم صوراً أقل';
+  if(m==='timeout') return 'استغرقت العملية وقتاً طويلاً. تحقق من الشبكة وراجع القائمة قبل إعادة المحاولة';
+  if(c==='permission-denied'||c==='unauthenticated') return 'انتهت الجلسة أو لا تملك صلاحية التعديل. سجّل الدخول من جديد';
+  if(c==='resource-exhausted') return 'تم تجاوز الحصة اليومية المجانية، حاول غداً';
+  if(/maximum allowed size|exceeds the maximum/i.test(m)) return 'حجم المحتوى كبير جداً، قلّل حجم الصور';
+  if(m==='offline'||c==='unavailable'||c==='deadline-exceeded'||(typeof navigator!=='undefined'&&navigator.onLine===false)) return 'لا يوجد اتصال بالخادم، تحقق من الشبكة وحاول مجدداً';
+  return 'حدث خطأ، حاول مرة أخرى';
 }
+const withTimeout=(p,ms)=>{ let t; return Promise.race([p,new Promise((_,rej)=>{ t=setTimeout(()=>rej(new Error('timeout')),ms); })]).finally(()=>clearTimeout(t)); };
+async function guarded(fn,okMsg,busyMsg,ms){
+  if(RUN) return; RUN=true; busy(true,busyMsg||'جاري الحفظ');
+  try{ await withTimeout(Promise.resolve().then(fn),ms||45000); toast(okMsg||'تم الحفظ ✓'); }
+  catch(e){ console.error(e); toast(errMsg(e)); }
+  finally{ RUN=false; busy(false); }
+}
+/* تحديث الذاكرة محلياً بعد الحفظ/الحذف بدل إعادة تحميل كل المحتوى */
+function putLocal(col,item){ const arr=S[col], i=arr.findIndex(x=>x.id===item.id); if(i>-1) arr[i]=item; else arr.push(item); if(col==='archive') sortYear(arr); else if(col!=='people') sortDesc(arr); }
+async function commit(col,item){ putLocal(col,item); if(col==='projects') await updateStats().catch(e=>console.error(e)); renderSite(); renderAdminLists(); }
+async function dropped(col,id){ S[col]=S[col].filter(x=>x.id!==id); if(col==='projects') await updateStats().catch(e=>console.error(e)); renderSite(); renderAdminLists(); }
 
 function bindAdmin(){
   $('#tabs').onclick=e=>{
@@ -1058,16 +1147,16 @@ function bindAdmin(){
   $('#nSave').onclick=()=>{
     const title=$('#nTitle').value.trim(); if(!title) return toast('اكتب عنوان الخبر');
     guarded(async()=>{
-      await DB.save('news',{id:$('#nId').value||undefined,title,date:$('#nDate').value||today(),tag:$('#nTag').value,body:$('#nBody').value.trim(),img:PIC.n||''});
-      resetNews(); await refresh();
+      await commit('news',await DB.save('news',{id:$('#nId').value||undefined,title,date:$('#nDate').value||today(),tag:$('#nTag').value,body:$('#nBody').value.trim(),img:PIC.n||''}));
+      resetNews();
     });
   };
   $('#nCancel').onclick=resetNews;
   $('#pSave').onclick=()=>{
     const title=$('#pTitle').value.trim(); if(!title) return toast('اكتب اسم المشروع');
     guarded(async()=>{
-      await DB.save('projects',{id:$('#pId').value||undefined,title,desc:$('#pDesc').value.trim(),status:$('#pStatus').value,pct:Number($('#pPct').value),date:$('#pDate').value||today(),img:PIC.p||''});
-      resetProj(); await refresh();
+      await commit('projects',await DB.save('projects',{id:$('#pId').value||undefined,title,desc:$('#pDesc').value.trim(),status:$('#pStatus').value,pct:Number($('#pPct').value),date:$('#pDate').value||today(),img:PIC.p||''}));
+      resetProj();
     });
   };
   $('#pCancel').onclick=resetProj;
@@ -1075,9 +1164,10 @@ function bindAdmin(){
     const title=$('#aTitle').value.trim();
     if(!PIC.a) return toast('اختر صورة من الجهاز أولاً');
     if(!title) return toast('اكتب عنواناً للصورة');
+    const year=normYear($('#aYear').value); if(year===null) return toast('اكتب السنة بالأرقام، مثل 1975 أو 1960-1970');
     guarded(async()=>{
-      await DB.save('archive',{id:$('#aId').value||undefined,title,year:$('#aYear').value.trim(),desc:$('#aDesc').value.trim(),img:PIC.a});
-      resetArch(); await refresh();
+      await commit('archive',await DB.save('archive',{id:$('#aId').value||undefined,title,year,desc:$('#aDesc').value.trim(),img:PIC.a}));
+      resetArch();
     });
   };
   $('#aCancel').onclick=resetArch;
@@ -1086,12 +1176,12 @@ function bindAdmin(){
   $('#rCancel').onclick=resetArt;
   $('#rSave').onclick=()=>{
     const title=$('#rTitle').value.trim(), body=$('#rBody').value.trim(); if(!title||!body) return toast('اكتب العنوان والنص');
-    guarded(async()=>{ await DB.save('articles',{id:$('#rId').value||undefined,title,author:$('#rAuthor').value.trim(),date:$('#rDate').value||today(),body,img:PIC.r||''}); resetArt(); await refresh(); });
+    guarded(async()=>{ await commit('articles',await DB.save('articles',{id:$('#rId').value||undefined,title,author:$('#rAuthor').value.trim(),date:$('#rDate').value||today(),body,img:PIC.r||''})); resetArt(); });
   };
   $('#gCancel').onclick=resetPeople;
   $('#gSave').onclick=()=>{
     const name=$('#gName').value.trim(); if(!name) return toast('اكتب الاسم');
-    guarded(async()=>{ await DB.save('people',{id:$('#gId').value||undefined,name,role:$('#gRole').value.trim(),bio:$('#gBio').value.trim(),dead:$('#gDead').checked,img:PIC.g||''}); resetPeople(); await refresh(); });
+    guarded(async()=>{ await commit('people',await DB.save('people',{id:$('#gId').value||undefined,name,role:$('#gRole').value.trim(),bio:$('#gBio').value.trim(),dead:$('#gDead').checked,img:PIC.g||''})); resetPeople(); });
   };
   $('#nTag').innerHTML=TAGS.map(t=>`<option>${t}</option>`).join('');
   $('#newsQ').oninput=async e=>{ newsQ=e.target.value; if(newsQ.trim()) await ensureAll('news'); renderSite(); };
@@ -1102,13 +1192,13 @@ function bindAdmin(){
   });
   $('#moreBtn').onclick=()=>{ $('#moreSheet').hidden=false; };
   $('#moreSheet').onclick=e=>{ if(e.target.id==='moreSheet'||e.target.closest('a')) $('#moreSheet').hidden=true; };
-  const moreBtn=(sel,key)=>{ $(sel).onclick=async()=>{ busy(true); try{ await loadMore(key); renderSite(); }catch(e){ console.error(e); toast('تعذّر التحميل، حاول مرة أخرى'); } finally{ busy(false); } }; };
+  const moreBtn=(sel,key)=>{ $(sel).onclick=async()=>{ const b=$(sel); if(b.disabled) return; const t=b.textContent; b.disabled=true; b.textContent='جاري التحميل…'; try{ await loadMore(key); renderSite(); }catch(e){ console.error(e); toast('تعذّر التحميل، حاول مرة أخرى'); } finally{ b.disabled=false; b.textContent=t; } }; };
   moreBtn('#newsMore','news'); moreBtn('#projMore','projects'); moreBtn('#archMore','archive'); moreBtn('#peopleMore','alive'); moreBtn('#memMore','dead'); moreBtn('#artMore','articles');
   document.addEventListener('click',e=>{ const w=e.target.closest('[data-wa]'); if(w){ track('share',{method:'whatsapp',content_type:w.dataset.k,item_id:w.dataset.id}); window.open('https://wa.me/?text='+encodeURIComponent(w.dataset.wa+'\n'+location.href.split('#')[0]+'#'+w.dataset.k+'/'+w.dataset.id+'\n— '+(S.settings.name||'')),'_blank'); } });
-  $('#sSave').onclick=()=>guarded(async()=>{
-    await DB.saveSettings({name:$('#sName').value.trim()||'قرية الفقوسة',tagline:$('#sTag').value.trim(),history:$('#sHist').value.trim(),phone:$('#sPhone').value.trim(),email:$('#sEmail').value.trim(),address:$('#sAddr').value.trim(),mapUrl:$('#sMap').value.trim(),donName:$('#sDonName').value.trim(),donApp:$('#sDonApp').value.trim(),donAcc:$('#sDonAcc').value.trim(),donPhone:$('#sDonPhone').value.trim(),adminName:$('#sAdmName').value.trim(),adminPhone:$('#sAdmPhone').value.trim(),alertText:$('#sAlert').value.trim(),alertEnd:$('#sAlertEnd').value,alertOn:$('#sAlertOn').checked,logo:PIC.logo||'',cover:PIC.cover||''});
-    await refresh();
-  });
+  $('#sSave').onclick=()=>{
+    const mu=$('#sMap').value.trim(); if(mu&&!/^https:\/\//i.test(mu)) return toast('رابط الخريطة يجب أن يبدأ بـ https://');
+    guarded(async()=>{ S.settings=await DB.saveSettings({name:$('#sName').value.trim()||'قرية الفقوسة',tagline:$('#sTag').value.trim(),history:$('#sHist').value.trim(),phone:$('#sPhone').value.trim(),email:$('#sEmail').value.trim(),address:$('#sAddr').value.trim(),mapUrl:$('#sMap').value.trim(),donName:$('#sDonName').value.trim(),donApp:$('#sDonApp').value.trim(),donAcc:$('#sDonAcc').value.trim(),donPhone:$('#sDonPhone').value.trim(),adminName:$('#sAdmName').value.trim(),adminPhone:$('#sAdmPhone').value.trim(),alertText:$('#sAlert').value.trim(),alertEnd:$('#sAlertEnd').value,alertOn:$('#sAlertOn').checked,logo:PIC.logo||'',cover:PIC.cover||''}); renderSite(); });
+  };
 
   $('#admin').addEventListener('click',e=>{
     const ed=e.target.closest('[data-e]'), de=e.target.closest('[data-d]');
@@ -1136,15 +1226,14 @@ function bindAdmin(){
         $('#aFormTitle').textContent='تعديل صورة الأرشيف';$('#aCancel').hidden=false;$('#aTitle').scrollIntoView({behavior:'smooth',block:'center'});
       }
     }
-    if(de && confirm('هل أنت متأكد من الحذف؟')) guarded(async()=>{ await DB.remove(de.dataset.d,de.dataset.id); await refresh(); },'تم الحذف');
+    if(de && confirm('هل أنت متأكد من الحذف؟')) guarded(async()=>{ await DB.remove(de.dataset.d,de.dataset.id); await dropped(de.dataset.d,de.dataset.id); },'تم الحذف','جاري الحذف');
   });
 
   $('#lBtn').onclick=async()=>{
-    $('#lErr').textContent='';
-    busy(true);
-    try{ await DB.login($('#lEmail').value.trim(),$('#lPass').value); $('#lPass').value=''; route(); }
-    catch(e){ $('#lErr').textContent='بيانات الدخول غير صحيحة'; }
-    finally{ busy(false); }
+    if(RUN) return; RUN=true; $('#lErr').textContent=''; busy(true,'جاري الدخول');
+    try{ await DB.login($('#lEmail').value.trim(),$('#lPass').value); $('#lPass').value=''; await route(); }
+    catch(e){ const c=(e&&e.code)||''; $('#lErr').textContent=c==='auth/too-many-requests'?'محاولات كثيرة، انتظر قليلاً ثم أعد المحاولة':c==='auth/network-request-failed'?'تعذّر الاتصال بالشبكة، حاول مجدداً':'بيانات الدخول غير صحيحة'; }
+    finally{ RUN=false; busy(false); }
   };
   $('#lPass').onkeydown=e=>{ if(e.key==='Enter') $('#lBtn').click() };
   $('#logoutBtn').onclick=async()=>{ await DB.logout(); location.hash='#home'; };
@@ -1162,7 +1251,7 @@ async function route(){
     let ok=false; try{ ok=await DB.isAdmin(); }catch(e){}
     $('#loginView').hidden=ok; $('#dashView').hidden=!ok;
     $('#demoNote').hidden=!DEMO;
-    if(ok){ busy(true); try{ await loadFull(); updateStats().catch(()=>{}); }catch(e){ console.error(e); toast('تعذّر تحميل البيانات'); } finally{ busy(false); } fillAbout(); renderAdminLists(); resetNews(); resetProj(); resetArch(); resetPeople(); resetArt(); }
+    if(ok){ busy(true,'جاري تحميل البيانات'); try{ await loadFull(); updateStats().catch(()=>{}); if(LEGACY) await DB.migrateMedia().catch(e=>console.error(e)); }catch(e){ console.error(e); toast('تعذّر تحميل البيانات'); } finally{ busy(false); } fillAbout(); renderAdminLists(); resetNews(); resetProj(); resetArch(); resetPeople(); resetArt(); }
     return;
   }
   const p=PAGES.includes(h)?h:'home';
@@ -1176,6 +1265,7 @@ async function route(){
     if(on && a.scrollIntoView) a.scrollIntoView({inline:'center',block:'nearest'});
   });
   window.scrollTo(0,0);
+  if(DATA_READY&&LAZY[p]) await lazy(p);
   if(hid && DATA_READY && (p==='news'||p==='projects')){
     const id=decodeURIComponent(hid), sel=(p==='news'?'#newsGrid':'#projGrid')+' [id="'+(p==='news'?'n-':'p-')+id.replace(/"/g,'')+'"]';
     let el=document.querySelector(sel);
@@ -1187,15 +1277,10 @@ async function route(){
 }
 
 (function(){ const u=['muhammadjousief','gmail.com'], m=u[0]+String.fromCharCode(64)+u[1], a=$('#devMail'); a.textContent=m; a.href='mailto:'+m; })();
-(function pwa(){ try{
-  const c=document.createElement('canvas'); c.width=c.height=192; const x=c.getContext('2d'); x.fillStyle='#0a5a8c'; x.fillRect(0,0,192,192);
-  const im=new Image(); im.onload=()=>{ x.drawImage(im,0,0,192,192); mk(c.toDataURL('image/png')); }; im.onerror=()=>mk(''); im.src=DEFAULT_LOGO;
-  function mk(icon){ const man={name:'قرية الفقوسة',short_name:'الفقوسة',lang:'ar',dir:'rtl',display:'standalone',start_url:location.href.split('#')[0],background_color:'#eef6f7',theme_color:'#0a5a8c',icons:icon?[{src:icon,sizes:'192x192',type:'image/png'}]:[]};
-    const l=document.createElement('link'); l.rel='manifest'; l.href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/manifest+json'})); document.head.appendChild(l);
-    if(icon){ const t=document.createElement('link'); t.rel='apple-touch-icon'; t.href=icon; document.head.appendChild(t); } }
-}catch(e){} })();
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 (async function start(){
   bindPickers(); bindAdmin(); bindLightbox();
+  document.addEventListener('click',e=>{ const r=e.target.closest('[data-retry]'); if(r) lazy(r.dataset.retry); });
   window.addEventListener('hashchange',route);
   const hadCache=!DEMO&&cacheLoad();
   if(hadCache) renderSite();
@@ -1207,7 +1292,7 @@ async function route(){
     if(!hadCache){ S.settings=SEED.settings; S.news=[]; S.projects=[]; S.archive=[]; S.people=[]; S.articles=[]; }
     const nb=$('#netBar'); nb.hidden=false;
     nb.innerHTML='تعذّر الاتصال بالخادم، يُعرض آخر محتوى محفوظ. <button id="netRetry">إعادة المحاولة</button>';
-    const again=async()=>{ try{ await loadAll(); cacheSave(); NETFAIL=false; nb.hidden=true; clearInterval(tm); renderSite(); }catch(x){} };
+    const again=async()=>{ try{ await loadAll(); cacheSave(); NETFAIL=false; nb.hidden=true; clearInterval(tm); renderSite(); const cp=(location.hash||'#home').slice(1).split('/')[0]; if(LAZY[cp]) lazy(cp); }catch(x){} };
     const tm=setInterval(again,20000); $('#netRetry').onclick=again;
   }
   DATA_READY=true;
