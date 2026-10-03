@@ -142,7 +142,7 @@ input[type=range]{padding:0}
 #toast.show{opacity:1}
 
 .alertbar{background:#b3402f;color:#fff;text-align:center;padding:8px 14px;font-weight:700;font-size:15px}
-.wa{background:#25d366;color:#053b1a;border:0;border-radius:20px;padding:2px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;display:inline-block;margin-top:8px}
+.wa.alt{background:#e9f7ef;color:#0b6b32;border:1px solid #25d366;margin-inline-start:6px}.wa{background:#25d366;color:#053b1a;border:0;border-radius:20px;padding:2px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;display:inline-block;margin-top:8px}
 .btn.sm2{padding:6px 16px;font-size:15px;margin:4px 0 0 6px}
 .people{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
 .person{text-align:center;padding:16px}
@@ -916,8 +916,8 @@ const projCard=p=>`
     <div class="pct"><span>${Number(p.pct)||0}% منجز</span><span>آخر تحديث: ${fmt(p.date)}</span></div>${wa('projects',p.id,p.title)}${p.status!=='مكتمل'?donBox():''}</div>
   </div>`;
 const archCard=a=>`
-  <figure>${safeImg(a.img)?`<img class="ph" data-zoom src="${esc(safeImg(a.img))}" alt="${esc(a.title)}" data-cap="${esc((a.year?a.year+' — ':'')+a.title)}" loading="lazy">`:`<div class="noimg">${PH_ICON}</div>`}
-    <figcaption>${a.year?`<span class="yr">${esc(a.year)}</span>`:''}<h3>${esc(a.title)}</h3>${a.desc?`<p>${esc(a.desc)}</p>`:''}</figcaption>
+  <figure id="ar-${esc(a.id)}">${safeImg(a.img)?`<img class="ph" data-zoom src="${esc(safeImg(a.img))}" alt="${esc(a.title)}" data-cap="${esc((a.year?a.year+' — ':'')+a.title)}" loading="lazy">`:`<div class="noimg">${PH_ICON}</div>`}
+    <figcaption>${a.year?`<span class="yr">${esc(a.year)}</span>`:''}<h3>${esc(a.title)}</h3>${a.desc?`<p>${esc(a.desc)}</p>`:''}${wa('archive',a.id,(a.year?a.year+' — ':'')+a.title)}${safeImg(a.img)?`<button class="wa alt" data-shimg="${esc(a.id)}">مشاركة الصورة</button>`:''}</figcaption>
   </figure>`;
 
 function logoInner(s){ return safeImg(s.logo)?`<img src="${esc(safeImg(s.logo))}" alt="">`:esc((s.name||'ق').trim().charAt(0)); }
@@ -1194,7 +1194,14 @@ function bindAdmin(){
   $('#moreSheet').onclick=e=>{ if(e.target.id==='moreSheet'||e.target.closest('a')) $('#moreSheet').hidden=true; };
   const moreBtn=(sel,key)=>{ $(sel).onclick=async()=>{ const b=$(sel); if(b.disabled) return; const t=b.textContent; b.disabled=true; b.textContent='جاري التحميل…'; try{ await loadMore(key); renderSite(); }catch(e){ console.error(e); toast('تعذّر التحميل، حاول مرة أخرى'); } finally{ b.disabled=false; b.textContent=t; } }; };
   moreBtn('#newsMore','news'); moreBtn('#projMore','projects'); moreBtn('#archMore','archive'); moreBtn('#peopleMore','alive'); moreBtn('#memMore','dead'); moreBtn('#artMore','articles');
-  document.addEventListener('click',e=>{ const w=e.target.closest('[data-wa]'); if(w){ track('share',{method:'whatsapp',content_type:w.dataset.k,item_id:w.dataset.id}); window.open('https://wa.me/?text='+encodeURIComponent(w.dataset.wa+'\n'+location.href.split('#')[0]+'#'+w.dataset.k+'/'+w.dataset.id+'\n— '+(S.settings.name||'')),'_blank'); } });
+  document.addEventListener('click',async e=>{ const sb=e.target.closest('[data-shimg]'); if(sb){
+    const it=S.archive.find(x=>x.id===sb.dataset.shimg); if(!it) return;
+    const cap=(it.year?it.year+' — ':'')+it.title, link=location.href.split('#')[0]+'#archive/'+it.id;
+    try{ const bl=await (await fetch(it.img)).blob(), f=new File([bl],'alfagousa.jpg',{type:bl.type||'image/jpeg'});
+      if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f],text:cap+(it.desc?'\n'+it.desc:'')+'\n'+link+'\n— '+(S.settings.name||'')}); track('share',{method:'native',content_type:'archive',item_id:it.id}); return; }
+    }catch(x){ if(x&&x.name==='AbortError') return; }
+    window.open('https://wa.me/?text='+encodeURIComponent(cap+'\n'+link+'\n— '+(S.settings.name||'')),'_blank'); return; }
+  const w=e.target.closest('[data-wa]'); if(w){ track('share',{method:'whatsapp',content_type:w.dataset.k,item_id:w.dataset.id}); window.open('https://wa.me/?text='+encodeURIComponent(w.dataset.wa+'\n'+location.href.split('#')[0]+'#'+w.dataset.k+'/'+w.dataset.id+'\n— '+(S.settings.name||'')),'_blank'); } });
   $('#sSave').onclick=()=>{
     const mu=$('#sMap').value.trim(); if(mu&&!/^https:\/\//i.test(mu)) return toast('رابط الخريطة يجب أن يبدأ بـ https://');
     guarded(async()=>{ S.settings=await DB.saveSettings({name:$('#sName').value.trim()||'قرية الفقوسة',tagline:$('#sTag').value.trim(),history:$('#sHist').value.trim(),phone:$('#sPhone').value.trim(),email:$('#sEmail').value.trim(),address:$('#sAddr').value.trim(),mapUrl:$('#sMap').value.trim(),donName:$('#sDonName').value.trim(),donApp:$('#sDonApp').value.trim(),donAcc:$('#sDonAcc').value.trim(),donPhone:$('#sDonPhone').value.trim(),adminName:$('#sAdmName').value.trim(),adminPhone:$('#sAdmPhone').value.trim(),alertText:$('#sAlert').value.trim(),alertEnd:$('#sAlertEnd').value,alertOn:$('#sAlertOn').checked,logo:PIC.logo||'',cover:PIC.cover||''}); renderSite(); });
@@ -1266,13 +1273,14 @@ async function route(){
   });
   window.scrollTo(0,0);
   if(DATA_READY&&LAZY[p]) await lazy(p);
-  if(hid && DATA_READY && (p==='news'||p==='projects')){
-    const id=decodeURIComponent(hid), sel=(p==='news'?'#newsGrid':'#projGrid')+' [id="'+(p==='news'?'n-':'p-')+id.replace(/"/g,'')+'"]';
+  const DL={news:['news','#newsGrid','n-','هذا الخبر غير موجود أو حُذف'],projects:['projects','#projGrid','p-','هذا المشروع غير موجود أو حُذف'],archive:['archive','#archGrid','ar-','هذه الصورة غير موجودة أو حُذفت']}[p];
+  if(hid && DATA_READY && DL){
+    const [col,grid,pre,msg]=DL, id=decodeURIComponent(hid), sel=grid+' [id="'+pre+id.replace(/"/g,'')+'"]';
     let el=document.querySelector(sel);
-    if(!el){ const col=p==='news'?'news':'projects'; let it=null; try{ it=await DB.getOne(col,id); }catch(e){}
+    if(!el){ let it=null; try{ it=await DB.getOne(col,id); }catch(e){}
       if(it){ if(!S[col].some(x=>x.id===it.id)){ S[col].push(it); sortDesc(S[col]); } newsQ=''; newsTag='الكل'; projQ=''; const q=$('#newsQ'); if(q) q.value=''; const q2=$('#projQ'); if(q2) q2.value=''; renderSite(); el=document.querySelector(sel); } }
     if(el){ setTimeout(()=>{ el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('hl'); setTimeout(()=>el.classList.remove('hl'),2800); },150); }
-    else toast(p==='news'?'هذا الخبر غير موجود أو حُذف':'هذا المشروع غير موجود أو حُذف');
+    else toast(msg);
   }
 }
 
