@@ -235,6 +235,24 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 </style>
 </head>
 <body>
+<noscript><div style="margin:20px;padding:16px;border:1px solid #d3e3e6;border-radius:12px;background:#fff;font-family:sans-serif;direction:rtl;text-align:center;line-height:1.9">يحتاج موقع قرية الفقوسة إلى تفعيل JavaScript في المتصفح. فعّله ثم أعد فتح الصفحة.</div></noscript>
+<script>
+/* شبكة أمان: إن لم يبدأ الموقع خلال ثوانٍ تظهر رسالة واضحة بدل صفحة فارغة (ES5 عمداً ليعمل في المتصفحات القديمة) */
+(function(){
+  var errs=[]; window.__appOk=false;
+  window.addEventListener('error',function(e){ try{ errs.push(String((e&&e.message)||'error').slice(0,90)); }catch(x){} });
+  setTimeout(function(){
+    if(window.__appOk||document.getElementById('bootFail')) return;
+    var d=document.createElement('div'); d.id='bootFail';
+    d.setAttribute('style','position:relative;z-index:50;margin:16px;padding:18px 16px;border:2px solid #0a5a8c;border-radius:14px;background:#fff;color:#1d2b33;text-align:center;line-height:1.9;font-family:Tahoma,Arial,sans-serif;font-size:16px;direction:rtl');
+    d.innerHTML='<b style="display:block;font-size:19px;color:#062f52;margin-bottom:6px">تعذّر تشغيل الموقع على هذا الجهاز</b>'+
+      'غالباً بسبب قِدم المتصفح أو ضعف الاتصال. جرّب إحدى الطرق:<br>١) أعد تحميل الصفحة.<br>٢) افتح الرابط في متصفح Chrome بدل المتصفح الداخلي لتطبيق آخر.<br>٣) حدّث متصفحك من متجر التطبيقات.<br>'+
+      '<button type="button" onclick="location.reload()" style="margin-top:10px;background:#0a5a8c;color:#fff;border:0;border-radius:20px;padding:6px 22px;font-size:16px">إعادة المحاولة</button>'+
+      '<div dir="ltr" style="margin-top:10px;font-size:12px;color:#667">'+(errs[0]?errs[0].replace(/[<>&]/g,''):'no-script-start')+' · '+String(navigator.userAgent||'').slice(0,70).replace(/[<>&]/g,'')+'</div>';
+    document.body.insertBefore(d,document.body.firstChild);
+  },4000);
+})();
+</script>
 
 <!-- ============ الموقع العام ============ -->
 <div id="site">
@@ -800,7 +818,7 @@ const DB = {
 
 /* ---------- أدوات ---------- */
 const $=s=>document.querySelector(s);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeImg=u=>/^(data:image\/|https?:\/\/)/.test(u||'')?u:'';
 const fmt=d=>{ try{return new Date(d).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}catch(e){return d||''} };
 const today=()=>new Date().toISOString().slice(0,10);
@@ -1126,7 +1144,7 @@ function bindBackup(){
           const it=cleanItem(col,raw); if(!it){ bad++; continue; }
           const c=cur.get(it.id);
           if(!c){ add++; ops.push({col,item:it}); }
-          else if(COLS[col].some(k=>JSON.stringify(c[k]??(k==='pct'?0:k==='dead'?false:''))!==JSON.stringify(it[k]))){ upd++; ops.push({col,item:it}); }
+          else if(COLS[col].some(k=>JSON.stringify(c[k]==null?(k==='pct'?0:k==='dead'?false:''):c[k])!==JSON.stringify(it[k]))){ upd++; ops.push({col,item:it}); }
           else same++;
         }
         rows.push('<li>'+COL_AR[col]+': يُضاف '+add+'، ويُحدَّث '+upd+'، دون تغيير '+same+(bad?'، متجاهَل '+bad:'')+'</li>');
@@ -1168,7 +1186,7 @@ function errMsg(e){
   if(m==='offline'||c==='unavailable'||c==='deadline-exceeded'||(typeof navigator!=='undefined'&&navigator.onLine===false)) return 'لا يوجد اتصال بالخادم، تحقق من الشبكة وحاول مجدداً';
   return 'حدث خطأ، حاول مرة أخرى';
 }
-const withTimeout=(p,ms)=>{ let t; return Promise.race([p,new Promise((_,rej)=>{ t=setTimeout(()=>rej(new Error('timeout')),ms); })]).finally(()=>clearTimeout(t)); };
+const withTimeout=(p,ms)=>{ let t; return Promise.race([p,new Promise((_,rej)=>{ t=setTimeout(()=>rej(new Error('timeout')),ms); })]).then(v=>{ clearTimeout(t); return v; },e=>{ clearTimeout(t); throw e; }); };
 async function guarded(fn,okMsg,busyMsg,ms){
   if(RUN) return; RUN=true; busy(true,busyMsg||'جاري الحفظ');
   try{ await withTimeout(Promise.resolve().then(fn),ms||45000); toast(okMsg||'تم الحفظ ✓'); }
@@ -1335,6 +1353,7 @@ if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.a
   const hadCache=!DEMO&&cacheLoad();
   if(hadCache) renderSite();
   else { const bl=logoInner(SEED.settings); $('#brandLogo').innerHTML=bl; $('#heroLogo').innerHTML=bl; }
+  window.__appOk=true; var bf=document.getElementById('bootFail'); if(bf) bf.remove();
   if((location.hash||'').slice(1).split('/')[0]!=='admin') route();
   try{ await loadAllRetry(); }
   catch(e){
