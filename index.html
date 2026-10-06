@@ -646,6 +646,10 @@ const store = {
     }
   }
 };
+/* تشخيص: مهلة زمنية + رمز الخطأ */
+const tmo=(p,ms,tag)=>{ let t; return Promise.race([p,new Promise((_,rej)=>{ t=setTimeout(()=>{ const e=new Error('timeout'); e.code='timeout'; e.src=tag; rej(e); },ms); })]).then(v=>{ clearTimeout(t); return v; },e=>{ clearTimeout(t); if(e&&!e.src) e.src=tag; throw e; }); };
+const errCode=e=>((e&&e.src?e.src+': ':'')+String((e&&(e.code||e.message))||'unknown')).replace(/[<>&"']/g,'').slice(0,90);
+const LAST_ERR={};
 function loadScript(src,n=3){return new Promise((res,rej)=>{const t=()=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>{s.remove();if(--n>0)setTimeout(t,1500);else rej(new Error('script'))};document.head.appendChild(s)};t()})}
 let NETFAIL=false, DATA_READY=false;
 let fbReady=null;
@@ -653,7 +657,7 @@ function initFB(){
   if(fbReady) return fbReady;
   fbReady=(async()=>{
     const v='10.12.2';
-    for(const n of ['app','auth','firestore']) await loadScript(`https://www.gstatic.com/firebasejs/${v}/firebase-${n}-compat.js`);
+    for(const n of ['app','auth','firestore']) await tmo(loadScript(`https://www.gstatic.com/firebasejs/${v}/firebase-${n}-compat.js`),15000,'sdk-'+n);
     firebase.initializeApp(FIREBASE_CONFIG);
     try{ firebase.firestore().settings({experimentalAutoDetectLongPolling:true,merge:true}); }catch(e){}
   })().catch(e=>{ fbReady=null; throw e; });
@@ -677,7 +681,7 @@ async function getMedia(main){
   if(!main.mediaV){ LEGACY=!!(main.logo||main.cover); return {logo:main.logo||'',cover:main.cover||'',hist:'',v:0}; }
   let c=null; try{ c=JSON.parse(localStorage.getItem('v_media')); }catch(e){}
   if(c&&c.v===main.mediaV) return c;
-  const d=await firebase.firestore().collection('settings').doc('media').get();
+  const d=await tmo(firebase.firestore().collection('settings').doc('media').get(),15000,'media');
   const x=d.exists?d.data():{};
   const m={logo:x.logo||'',cover:x.cover||'',hist:x.hist||'',v:main.mediaV};
   try{ localStorage.setItem('v_media',JSON.stringify(m)); }catch(e){}
@@ -687,7 +691,7 @@ const DB = {
   async getSettings(){
     if(DEMO) return {...SEED.settings,...(store.get('v_settings')||{})};
     await initFB();
-    const d=await firebase.firestore().collection('settings').doc('main').get();
+    const d=await tmo(firebase.firestore().collection('settings').doc('main').get(),15000,'settings');
     const main=d.exists?d.data():{}; RAW_MAIN=main;
     const m=await getMedia(main); MEDIA_CUR=m;
     return {...SEED.settings,...main,logo:m.logo||SEED.settings.logo,cover:m.cover||'',histImg:m.hist||''};
@@ -729,7 +733,7 @@ const DB = {
     if(cfg.where) q=q.where(cfg.where[0],'==',cfg.where[1]);
     if(cfg.order) q=q.orderBy(cfg.order[0],cfg.order[1]);
     if(st.last) q=q.startAfter(st.last);
-    const sn=await q.limit(size).get();
+    const sn=await tmo(q.limit(size).get(),12000,key);
     if(sn.docs.length) st.last=sn.docs[sn.docs.length-1];
     if(sn.docs.length<size) st.done=true;
     return sn.docs.map(d=>({id:d.id,...d.data()}));
@@ -817,7 +821,7 @@ function cacheSave(){ const d={settings:(S.settings.mediaV?{...S.settings,logo:'
   try{ localStorage.setItem(CACHE,JSON.stringify(d)); }catch(e){ try{ const l=o=>o.map(({img,...r})=>r); localStorage.setItem(CACHE,JSON.stringify({...d,news:l(d.news),projects:l(d.projects),archive:l(d.archive),people:l(d.people),articles:l(d.articles||[])})); }catch(x){} } }
 function cacheLoad(){ try{ const d=JSON.parse(localStorage.getItem(CACHE)); if(d&&d.news){ Object.assign(S,d); applyMediaCache(); return true; } }catch(e){} return false; }
 function applyMediaCache(){ try{ const m=JSON.parse(localStorage.getItem('v_media')); if(m&&S.settings.mediaV){ S.settings={...S.settings,logo:m.logo||S.settings.logo||'',cover:m.cover||'',histImg:m.hist||''}; } }catch(e){} if(!S.settings.logo) S.settings.logo=DEFAULT_LOGO; }
-async function loadAllRetry(n=3){ let last; for(let i=0;i<n;i++){ try{ await loadAll(); if(!DEMO) cacheSave(); return; }catch(e){ last=e; console.error(e); await new Promise(r=>setTimeout(r,1500*(i+1))); } } throw last; }
+async function loadAllRetry(n=2){ let last; for(let i=0;i<n;i++){ try{ await loadAll(); if(!DEMO) cacheSave(); return; }catch(e){ last=e; console.error(e); await new Promise(r=>setTimeout(r,1500*(i+1))); } } throw last; }
 function calcStats(pr){
   const done=pr.filter(p=>p.status==='مكتمل').length, avg=pr.length?Math.round(pr.reduce((a,p)=>a+(Number(p.pct)||0),0)/pr.length):0;
   const ft=pr.filter(p=>p.status!=='مكتمل').sort((a,b)=>(Number(b.pct)||0)-(Number(a.pct)||0))[0];
@@ -826,7 +830,7 @@ function calcStats(pr){
 async function updateStats(){ const pr=FULL?S.projects:await DB.list('projects'); const st=calcStats(pr); await DB.putStats(st); S.stats=st; }
 const LZ={news:0,projects:0,archive:0,people:0,articles:0};   /* 0 لم يُحمَّل · 1 جارٍ · 2 تمّ · 3 فشل */
 const SKEL=n=>'<div class="card skel"></div>'.repeat(n);
-const failBox=k=>`<div class="empty">تعذّر التحميل.<br><button class="btn sec sm" data-retry="${k}">إعادة المحاولة</button></div>`;
+const failBox=k=>`<div class="empty">تعذّر التحميل.<br><button class="btn sec sm" data-retry="${k}">إعادة المحاولة</button><div dir="ltr" style="margin-top:8px;font-size:13px;color:#667;word-break:break-all">${esc(LAST_ERR[k]||'')}</div></div>`;
 const gate=(k,n,f)=>LZ[k]===3?failBox(k):LZ[k]<2?SKEL(n):f();
 async function loadAll(){
   resetCur(); for(const k in LZ) if(LZ[k]!==2) LZ[k]=0;
@@ -845,7 +849,7 @@ async function lazy(p){
   const fn=LAZY[p]; if(!fn||LZ[p]===1||LZ[p]===2) return;
   LZ[p]=1; renderSite();
   try{ await fn(); LZ[p]=2; }
-  catch(e){ console.error(e); LZ[p]=3; toast('تعذّر التحميل، تحقق من الاتصال'); }
+  catch(e){ console.error(e); LZ[p]=3; LAST_ERR[p]=errCode(e); toast('تعذّر التحميل، تحقق من الاتصال'); }
   renderSite();
 }
 async function loadFull(){
@@ -1341,7 +1345,7 @@ if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) window.a
     console.error(e); NETFAIL=true;
     if(!hadCache){ S.settings=SEED.settings; S.news=[]; S.projects=[]; S.archive=[]; S.people=[]; S.articles=[]; }
     const nb=$('#netBar'); nb.hidden=false;
-    nb.innerHTML='تعذّر الاتصال بالخادم، يُعرض آخر محتوى محفوظ. <button id="netRetry">إعادة المحاولة</button>';
+    nb.innerHTML='تعذّر الاتصال بالخادم، يُعرض آخر محتوى محفوظ. <button id="netRetry">إعادة المحاولة</button><div dir="ltr" style="font-size:12px;margin-top:4px;word-break:break-all">'+esc(errCode(e))+'</div>';
     const again=async()=>{ try{ await loadAll(); cacheSave(); NETFAIL=false; nb.hidden=true; clearInterval(tm); renderSite(); const cp=(location.hash||'#home').slice(1).split('/')[0]; if(LAZY[cp]) lazy(cp); }catch(x){} };
     const tm=setInterval(again,20000); $('#netRetry').onclick=again;
   }
