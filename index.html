@@ -232,6 +232,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 .art-item b{display:block;font-size:17px}.art-item span{color:var(--muted);font-size:13px}.art-item p{margin:4px 0 0;font-size:15px;color:#3d4a43}
 #toTop{position:fixed;bottom:18px;inset-inline-start:16px;width:46px;height:46px;border-radius:50%;border:0;background:var(--green);color:#fff;display:grid;place-items:center;box-shadow:0 4px 14px rgba(6,47,82,.35);cursor:pointer;z-index:30;opacity:.94}
 #toTop[hidden]{display:none}
+.clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.clamp.open{display:block;-webkit-line-clamp:unset;overflow:visible}
+.more-btn{display:inline-block;margin-top:4px;border:0;background:none;color:var(--green);font:inherit;font-size:15px;font-weight:700;cursor:pointer;padding:2px 0}
+.art-item a{display:block;color:inherit;text-decoration:none}
 </style>
 </head>
 <body>
@@ -922,10 +926,10 @@ function bindPickers(){
 const PH_ICON='<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>';
 const pic=(u,alt)=>safeImg(u)?`<img class="pic" data-zoom src="${esc(safeImg(u))}" alt="${esc(alt)}" loading="lazy">`:'';
 const wa=(k,id,t)=>`<button class="wa" data-wa="${esc(t)}" data-k="${k}" data-id="${esc(id)}">مشاركة عبر واتساب</button>`;
-const personCard=g=>`<div class="card person">${safeImg(g.img)?`<img data-zoom src="${esc(safeImg(g.img))}" alt="${esc(g.name)}">`:`<div class="noimg">${esc((g.name||'').charAt(0))}</div>`}<h3>${esc(g.name)}</h3>${g.role?`<div class="role">${esc(g.role)}</div>`:''}${g.bio?`<p>${esc(g.bio)}</p>`:''}</div>`;
+const personCard=g=>`<div class="card person" id="g-${esc(g.id)}">${safeImg(g.img)?`<img data-zoom src="${esc(safeImg(g.img))}" alt="${esc(g.name)}">`:`<div class="noimg">${esc((g.name||'').charAt(0))}</div>`}<h3>${esc(g.name)}</h3>${g.role?`<div class="role">${esc(g.role)}</div>`:''}${g.bio?`<p class="clamp">${esc(g.bio)}</p>`:''}${wa('people',g.id,g.name+(g.role?' — '+g.role:''))}</div>`;
 const newsCard=n=>`
   <article class="card news-card" id="n-${n.id}">${pic(n.img,n.title)}
-    <div class="b"><div class="date">${fmt(n.date)}<span class="tagb t-${esc(n.tag||'عام')}">${esc(n.tag||'عام')}</span></div><h3>${esc(n.title)}</h3><p>${esc(n.body)}</p>${wa('news',n.id,n.title)}</div>
+    <div class="b"><div class="date">${fmt(n.date)}<span class="tagb t-${esc(n.tag||'عام')}">${esc(n.tag||'عام')}</span></div><h3>${esc(n.title)}</h3><p class="clamp">${esc(n.body)}</p>${wa('news',n.id,n.title)}</div>
   </article>`;
 const statusCls=st=>st==='مكتمل'?'done':st==='مخطط'?'plan':'';
 const donBox=()=>{ const s=S.settings; if(!(s.donName||s.donAcc||s.donPhone)) return ''; const r=(l,v,cp)=>v?`<div class="r"><span>${l}: <b dir="ltr">${esc(v)}</b></span>${cp?`<button class="cp" data-cp="${esc(v)}">نسخ</button>`:''}</div>`:'';
@@ -933,13 +937,13 @@ const donBox=()=>{ const s=S.settings; if(!(s.donName||s.donAcc||s.donPhone)) re
 const projCard=p=>`
   <div class="card proj" id="p-${p.id}">${pic(p.img,p.title)}
     <div class="b"><span class="tag ${statusCls(p.status)}">${esc(p.status)}</span>
-    <h3>${esc(p.title)}</h3><p>${esc(p.desc)}</p>
+    <h3>${esc(p.title)}</h3><p class="clamp">${esc(p.desc)}</p>
     <div class="bar"><i style="width:${Number(p.pct)||0}%"></i></div>
     <div class="pct"><span>${Number(p.pct)||0}% منجز</span><span>آخر تحديث: ${fmt(p.date)}</span></div>${wa('projects',p.id,p.title)}${p.status!=='مكتمل'?donBox():''}</div>
   </div>`;
 const archCard=a=>`
   <figure id="ar-${esc(a.id)}">${safeImg(a.img)?`<img class="ph" data-zoom src="${esc(safeImg(a.img))}" alt="${esc(a.title)}" data-cap="${esc((a.year?a.year+' — ':'')+a.title)}" loading="lazy">`:`<div class="noimg">${PH_ICON}</div>`}
-    <figcaption>${a.year?`<span class="yr">${esc(a.year)}</span>`:''}<h3>${esc(a.title)}</h3>${a.desc?`<p>${esc(a.desc)}</p>`:''}${wa('archive',a.id,(a.year?a.year+' — ':'')+a.title)}${safeImg(a.img)?`<button class="wa alt" data-shimg="${esc(a.id)}">مشاركة الصورة</button>`:''}</figcaption>
+    <figcaption>${a.year?`<span class="yr">${esc(a.year)}</span>`:''}<h3>${esc(a.title)}</h3>${a.desc?`<p class="clamp">${esc(a.desc)}</p>`:''}${wa('archive',a.id,(a.year?a.year+' — ':'')+a.title)}${safeImg(a.img)?`<button class="wa alt" data-shimg="${esc(a.id)}">مشاركة الصورة</button>`:''}</figcaption>
   </figure>`;
 
 
@@ -984,7 +988,7 @@ function renderArticles(){
   $('#artMain').innerHTML=`<article class="card art-main" id="a-${esc(cur.id)}">${back}${pic(cur.img,cur.title)}<h1>${esc(cur.title)}</h1><div class="art-meta">${artMeta(cur)}</div><div class="art-body">${esc(cur.body)}</div>${wa('articles',cur.id,cur.title)}</article>`;
   const prev=L.filter(a=>a.id!==cur.id);
   $('#artPrevBox').hidden=!prev.length; $('#artMore').hidden=CUR.articles.done||LZ.articles<2;
-  $('#artList').innerHTML=prev.map(a=>`<a class="art-item" href="#articles/${esc(a.id)}"><b>${esc(a.title)}</b><span>${artMeta(a)}</span><p>${esc(excerpt(a.body,110))}</p></a>`).join('');
+  $('#artList').innerHTML=prev.map(a=>`<div class="art-item"><a href="#articles/${esc(a.id)}"><b>${esc(a.title)}</b><span>${artMeta(a)}</span><p>${esc(excerpt(a.body,110))}</p></a>${wa('articles',a.id,a.title)}</div>`).join('');
 }
 function renderSite(){
   renderArticles();
@@ -1294,6 +1298,15 @@ function bindAdmin(){
 
 /* ---------- التوجيه (التبويبات) ---------- */
 const PAGES=['home','history','news','articles','projects','people','archive','contact','about'];
+function measureClamps(){ document.querySelectorAll('.clamp:not([data-ck])').forEach(p=>{ if(!p.offsetParent) return; p.dataset.ck='1'; if(p.scrollHeight>p.clientHeight+2){ const b=document.createElement('button'); b.type='button'; b.className='more-btn'; b.textContent='قراءة المزيد'; p.after(b); } }); }
+function expandIn(el){ measureClamps(); el.querySelectorAll('.clamp').forEach(p=>{ p.classList.add('open'); const b=p.nextElementSibling; if(b&&b.classList.contains('more-btn')) b.textContent='طي'; }); }
+(function(){ let q=false; const sch=()=>{ if(q) return; q=true; requestAnimationFrame(()=>{ q=false; measureClamps(); }); };
+  new MutationObserver(sch).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+  let rt; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ document.querySelectorAll('.clamp:not(.open)').forEach(p=>{ delete p.dataset.ck; const n=p.nextElementSibling; if(n&&n.classList.contains('more-btn')) n.remove(); }); measureClamps(); },250); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ document.querySelectorAll('.clamp:not(.open)').forEach(p=>{ delete p.dataset.ck; const n=p.nextElementSibling; if(n&&n.classList.contains('more-btn')) n.remove(); }); measureClamps(); });
+  document.addEventListener('click',e=>{ const b=e.target.closest('.more-btn'); if(!b) return; const p=b.previousElementSibling; if(!p||!p.classList.contains('clamp')) return;
+    const open=p.classList.toggle('open'); b.textContent=open?'طي':'قراءة المزيد';
+    if(!open){ const card=p.closest('.card,figure,.art-item')||p; if(card.getBoundingClientRect().top<0) card.scrollIntoView({behavior:'smooth',block:'start'}); } }); })();
 async function route(){
   const hh=(location.hash||'#home').slice(1);
   const [h,hid]=hh.split('/');
@@ -1318,13 +1331,13 @@ async function route(){
   });
   window.scrollTo(0,0);
   if(DATA_READY&&LAZY[p]) await lazy(p);
-  const DL={news:['news','#newsGrid','n-','هذا الخبر غير موجود أو حُذف'],projects:['projects','#projGrid','p-','هذا المشروع غير موجود أو حُذف'],archive:['archive','#archGrid','ar-','هذه الصورة غير موجودة أو حُذفت']}[p];
+  const DL={news:['news','#newsGrid','n-','هذا الخبر غير موجود أو حُذف'],projects:['projects','#projGrid','p-','هذا المشروع غير موجود أو حُذف'],archive:['archive','#archGrid','ar-','هذه الصورة غير موجودة أو حُذفت'],people:['people','.people','g-','هذه الشخصية غير موجودة أو حُذفت']}[p];
   if(hid && DATA_READY && DL){
     const [col,grid,pre,msg]=DL, id=decodeURIComponent(hid), sel=grid+' [id="'+pre+id.replace(/"/g,'')+'"]';
     let el=document.querySelector(sel);
     if(!el){ let it=null; try{ it=await DB.getOne(col,id); }catch(e){}
       if(it){ if(!S[col].some(x=>x.id===it.id)){ S[col].push(it); sortDesc(S[col]); } newsQ=''; newsTag='الكل'; projQ=''; const q=$('#newsQ'); if(q) q.value=''; const q2=$('#projQ'); if(q2) q2.value=''; renderSite(); el=document.querySelector(sel); } }
-    if(el){ setTimeout(()=>{ el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('hl'); setTimeout(()=>el.classList.remove('hl'),2800); },150); }
+    if(el){ setTimeout(()=>{ expandIn(el); el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('hl'); setTimeout(()=>el.classList.remove('hl'),2800); },150); }
     else toast(msg);
   }
 }
