@@ -236,6 +236,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 .clamp.open{display:block;-webkit-line-clamp:unset;overflow:visible}
 .more-btn{display:inline-block;margin-top:4px;border:0;background:none;color:var(--green);font:inherit;font-size:15px;font-weight:700;cursor:pointer;padding:2px 0}
 .art-item a{display:block;color:inherit;text-decoration:none}
+.introbar{background:linear-gradient(90deg,var(--green),#0b6b4a);color:#fff;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:9px 14px;font-size:15px;text-align:center}
+.introbar button{border:0;border-radius:16px;padding:3px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+#introGo{background:#fff;color:var(--green)}#introX{background:rgba(255,255,255,.2);color:#fff;padding:3px 10px}
 </style>
 </head>
 <body>
@@ -243,6 +246,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 <!-- ============ الموقع العام ============ -->
 <div id="site">
   <div id="netBar" class="alertbar" style="background:#7a5200" hidden></div>
+  <div id="introBar" class="introbar" hidden><span>أنت الآن في <b>موقع قرية الفقوسة</b>: أخبار القرية ومشاريعها وشخصياتها وأرشيفها.</span><span><button id="introGo" type="button">تصفّح الموقع</button> <button id="introX" type="button" aria-label="إغلاق">×</button></span></div>
   <div id="alertBar" class="alertbar" hidden></div>
   <header class="top">
     <div class="wrap">
@@ -1298,6 +1302,32 @@ function bindAdmin(){
 
 /* ---------- التوجيه (التبويبات) ---------- */
 const PAGES=['home','history','news','articles','projects','people','archive','contact','about'];
+const ENTRY_SHARE=/^#(news|projects|articles|people|archive)\/.+/.test(location.hash);
+function introSync(){ let x=false; try{ x=!!sessionStorage.getItem('introX'); }catch(e){}
+  const k=(location.hash||'#home').slice(1).split('/')[0];
+  $('#introBar').hidden=!(ENTRY_SHARE&&!x&&k&&k!=='home'&&k!=='admin'); }
+(function(){
+  const SECT=['news','articles','projects','people','archive','contact','history','about'];
+  const cur=()=>(location.hash||'#home').slice(1).split('/')[0]||'home';
+  const done=()=>{ try{ sessionStorage.setItem('introX','1'); }catch(e){} introSync(); };
+  $('#introGo').onclick=()=>{ done(); location.replace('#home'); };
+  $('#introX').onclick=done;
+  window.addEventListener('hashchange',introSync); introSync();
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('a[href^="#"]'); if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey||e.shiftKey||a.target==='_blank') return;
+    const h=a.getAttribute('href').slice(1), k=h.split('/')[0], hasId=h.includes('/');
+    const isHome=(h===''||h==='home'), isSect=SECT.includes(k)&&!hasId;
+    if(!isHome&&!isSect) return;
+    if(cur()==='admin') return;
+    e.preventDefault();
+    const c=cur(), onDetail=location.hash.includes('/');
+    if(isHome){ if(c==='home'){ window.scrollTo(0,0); return; }
+      if(history.state&&history.state.fh) history.back(); else location.replace('#home'); return; }
+    if(c===k&&!onDetail){ window.scrollTo(0,0); return; }
+    if(c==='home'){ history.pushState({fh:true},'','#'+k); } else { history.replaceState(history.state,'','#'+k); }
+    route(); introSync();
+  });
+})();
 function measureClamps(){ document.querySelectorAll('.clamp:not([data-ck])').forEach(p=>{ if(!p.offsetParent) return; p.dataset.ck='1'; if(p.scrollHeight>p.clientHeight+2){ const b=document.createElement('button'); b.type='button'; b.className='more-btn'; b.textContent='قراءة المزيد'; p.after(b); } }); }
 function expandIn(el){ measureClamps(); el.querySelectorAll('.clamp').forEach(p=>{ p.classList.add('open'); const b=p.nextElementSibling; if(b&&b.classList.contains('more-btn')) b.textContent='طي'; }); }
 (function(){ let q=false; const sch=()=>{ if(q) return; q=true; requestAnimationFrame(()=>{ q=false; measureClamps(); }); };
