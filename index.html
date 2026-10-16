@@ -3,13 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>قرية الفقوسة</title>
+<title>قرية الفقوسة — أخبار القرية وتاريخها ومشاريعها</title>
+<meta name="google-site-verification" content="ضع_كود_التحقق_هنا">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"قرية الفقوسة","alternateName":"الفقوسة","url":"https://alfagousa.github.io/","inLanguage":"ar","description":"الموقع الرسمي لقرية الفقوسة: أخبار القرية ومشاريعها وأرشيفها وتاريخها."}</script>
 <meta name="theme-color" content="#0a5a8c">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="canonical" href="https://alfagousa.github.io/">
-<meta name="description" content="الموقع الرسمي لقرية الفقوسة: أخبار القرية ومشاريعها وأرشيفها وتاريخها.">
+<meta name="description" content="الموقع الرسمي لقرية الفقوسة: آخر أخبار القرية، تاريخها، مشاريعها، أرشيف الصور والوثائق، ومقالات وأبناء القرية.">
 <script>window['ga-disable-G-N99DFKJ2V3']=/^#admin/.test(location.hash);</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-N99DFKJ2V3"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-N99DFKJ2V3');</script>
@@ -997,7 +999,7 @@ function renderArticles(){
 function renderSite(){
   renderArticles();
   const s=S.settings;
-  document.title=s.name+' — الموقع الرسمي';
+  document.title=s.name+' — أخبار القرية وتاريخها ومشاريعها';
   let ic=document.querySelector('link[rel=icon]');
   if(!ic){ ic=document.createElement('link'); ic.rel='icon'; document.head.appendChild(ic); }
   if(safeImg(s.logo)) ic.href=s.logo;
