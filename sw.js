@@ -2,7 +2,7 @@
    - الصفحة نفسها: الشبكة أولاً (حتى تظهر تحديثاتك فوراً)، وإذا تأخرت الشبكة 4 ثوانٍ أو انقطعت تُعرض النسخة المحفوظة.
    - الأيقونات: من الذاكرة أولاً.
    - Firebase والخطوط وGoogle Analytics: لا نتدخل فيها إطلاقاً. */
-const C = 'alfagousa-v1';
+const C = 'alfagousa-v2';
 const PRE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
